@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import AppLayout from './components/AppLayout';
 import AboutPage from './pages/AboutPage';
 import ExplorePage from './pages/ExplorePage';
+import GalleryPage from './pages/GalleryPage';
 import HomePage from './pages/HomePage';
 import PostcardPage from './pages/PostcardPage';
 import SpotDetailPage from './pages/SpotDetailPage';
@@ -13,6 +14,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/explore" element={<ExplorePage />} />
+        <Route path="/gallery" element={<GalleryPage />} />
         <Route path="/spots/:slug" element={<SpotDetailPage />} />
         <Route path="/stamps" element={<StampsPage />} />
         <Route path="/postcard" element={<PostcardPage />} />
@@ -22,4 +24,3 @@ export default function App() {
     </AppLayout>
   );
 }
-

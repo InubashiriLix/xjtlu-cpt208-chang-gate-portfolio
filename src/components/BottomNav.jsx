@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom';
 const navItems = [
   { to: '/', label: 'Home' },
   { to: '/explore', label: 'Explore' },
+  { to: '/gallery', label: 'Gallery' },
   { to: '/stamps', label: 'Stamps' },
   { to: '/postcard', label: 'Postcard' },
   { to: '/about', label: 'About' },
@@ -26,4 +27,3 @@ export default function BottomNav() {
     </nav>
   );
 }
-

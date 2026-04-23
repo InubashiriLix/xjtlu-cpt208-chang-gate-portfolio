@@ -20,6 +20,14 @@ function getHeaderMeta(pathname) {
     };
   }
 
+  if (pathname.startsWith('/gallery')) {
+    return {
+      title: 'Gallery',
+      eyebrow: 'Field views',
+      description: 'Real photos that connect the route, memories, and postcard mood.',
+    };
+  }
+
   if (pathname.startsWith('/stamps')) {
     return {
       title: 'Stamp Booklet',
@@ -65,4 +73,3 @@ export default function AppLayout({ children }) {
     </div>
   );
 }
-
