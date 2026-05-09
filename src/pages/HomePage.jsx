@@ -9,7 +9,7 @@ import { useAppState } from '../context/AppStateContext';
 import { featureCards } from '../data/spots';
 
 export default function HomePage() {
-  const { spots, selectedRoute, stats, progress, isCollected } = useAppState();
+  const { spots, selectedRoute, stats, progress, isCollected, resetVisitHistory } = useAppState();
   const nextSpot = spots.find((spot) => !progress.collectedSpotIds.includes(spot.id)) ?? spots[0];
   const nearbySpots = spots.slice(0, 3);
   const routeSpots = selectedRoute.spotIds
@@ -18,7 +18,11 @@ export default function HomePage() {
 
   return (
     <div className="page-stack">
-      <HeroSection nextSpot={nextSpot} stats={stats} />
+      <HeroSection
+        nextSpot={nextSpot}
+        stats={stats}
+        onReset={resetVisitHistory}
+      />
 
       <ProgressCard stats={stats} />
 
@@ -91,4 +95,3 @@ export default function HomePage() {
     </div>
   );
 }
-

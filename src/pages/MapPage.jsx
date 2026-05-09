@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AMapLoader from '@amap/amap-jsapi-loader';
-import { heritageSpots, walkingRoutes } from '../data/spots';
+import { changGateLocation, heritageSpots, walkingRoutes } from '../data/spots';
 import { useAppState } from '../context/AppStateContext';
 
 const AMAP_KEY = import.meta.env.VITE_AMAP_KEY;
 const AMAP_SECURITY_KEY = import.meta.env.VITE_AMAP_SECURITY_KEY;
 
-const MAP_CENTER = { lng: 120.604, lat: 31.317 };
+const MAP_CENTER = changGateLocation;
 
 const routeStyles = [
   { strokeColor: '#2f8a7d', strokeWeight: 4, strokeOpacity: 0.7, strokeStyle: 'solid' },
@@ -138,7 +138,7 @@ export default function MapPage() {
         map.add(polyline);
       });
 
-      map.setFitView(null, false, [60, 60, 60, 60]);
+      map.setZoomAndCenter(16, [MAP_CENTER.lng, MAP_CENTER.lat]);
     } catch (err) {
       console.error('AMap init error:', err);
       setError('Failed to load map. Check your API key and network.');

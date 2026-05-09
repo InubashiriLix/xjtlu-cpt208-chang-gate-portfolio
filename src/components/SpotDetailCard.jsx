@@ -1,4 +1,14 @@
+function formatDistance(meters) {
+  if (meters >= 1000) {
+    return `${(meters / 1000).toFixed(1)} km`;
+  }
+
+  return `${meters} m`;
+}
+
 export default function SpotDetailCard({ spot, collected, onCollect }) {
+  const distancePrefix = spot.isDistanceLive ? 'Current distance' : 'Approx. from Chang Gate';
+
   return (
     <section className="card detail-hero">
       <div className="detail-hero-meta">
@@ -7,7 +17,7 @@ export default function SpotDetailCard({ spot, collected, onCollect }) {
       </div>
       <h2>{spot.name}</h2>
       <p className="detail-distance">
-        {spot.distanceMeters} m away · around {spot.walkMinutes} minutes on foot
+        {distancePrefix}: {formatDistance(spot.distanceMeters)} · around {spot.walkMinutes} minutes on foot
       </p>
       <p className="detail-story-lead">{spot.storySnippet}</p>
       <div className="detail-hero-actions">
@@ -25,4 +35,3 @@ export default function SpotDetailCard({ spot, collected, onCollect }) {
     </section>
   );
 }
-

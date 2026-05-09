@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
 
-export default function HeroSection({ nextSpot, stats }) {
+export default function HeroSection({ nextSpot, stats, onReset }) {
+  const isComplete = stats.collectedCount >= stats.totalSpots;
+
   return (
     <section className="hero card">
       <div className="hero-copy">
@@ -31,15 +33,23 @@ export default function HeroSection({ nextSpot, stats }) {
           <strong>{(stats.walkedMeters / 1000).toFixed(1)} km</strong>
         </div>
         <div className="hero-next-stop">
-          <p className="eyebrow">Continue with</p>
+          <p className="eyebrow">{isComplete ? 'Walk complete' : 'Continue with'}</p>
           <h3>{nextSpot.name}</h3>
           <p>
             {nextSpot.walkMinutes} min away · {nextSpot.category}
           </p>
           <p className="hero-next-story">{nextSpot.storySnippet}</p>
+          {isComplete && onReset ? (
+            <button
+              type="button"
+              className="button button-primary hero-reset-button"
+              onClick={onReset}
+            >
+              Reset route
+            </button>
+          ) : null}
         </div>
       </div>
     </section>
   );
 }
-

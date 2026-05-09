@@ -1,6 +1,18 @@
 import { Link } from 'react-router-dom';
 
+function formatDistance(meters) {
+  if (meters >= 1000) {
+    return `${(meters / 1000).toFixed(1)} km`;
+  }
+
+  return `${meters} m`;
+}
+
 export default function SpotCard({ spot, collected, compact = false }) {
+  const distanceLabel = spot.isDistanceLive
+    ? `Current distance: ${formatDistance(spot.distanceMeters)}`
+    : `Approx. ${formatDistance(spot.distanceMeters)} from Chang Gate`;
+
   return (
     <article className={`card spot-card${compact ? ' is-compact' : ''}`}>
       <div className="spot-card-top">
@@ -10,7 +22,7 @@ export default function SpotCard({ spot, collected, compact = false }) {
         </span>
       </div>
       <h3>{spot.name}</h3>
-      <p className="spot-distance">{spot.distanceMeters} m from current position</p>
+      <p className="spot-distance">{distanceLabel}</p>
       <p className="spot-snippet">{spot.storySnippet}</p>
       <div className="spot-tags" aria-label="Tags">
         {spot.tags.map((tag) => (
@@ -31,4 +43,3 @@ export default function SpotCard({ spot, collected, compact = false }) {
     </article>
   );
 }
-

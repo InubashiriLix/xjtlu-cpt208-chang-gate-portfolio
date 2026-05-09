@@ -1,15 +1,32 @@
-export default function PostcardPreview({ theme, favoriteSpot, collectedSpots }) {
+export default function PostcardPreview({
+  theme,
+  favoriteSpot,
+  collectedSpots,
+  uploadedImage,
+  imageEdit,
+  customMessage,
+}) {
+  const imageStyle = uploadedImage
+    ? {
+        transform: `translate(${imageEdit.x / 4}%, ${imageEdit.y / 4}%) scale(${imageEdit.zoom / 100})`,
+        filter: `brightness(${imageEdit.brightness}%) contrast(${imageEdit.contrast}%) saturate(${imageEdit.saturation}%)`,
+      }
+    : null;
+
   return (
     <article className="card postcard-preview">
       <div
-        className="postcard-art"
+        className={`postcard-art${uploadedImage ? ' has-user-image' : ''}`}
         style={{
           background: `linear-gradient(145deg, ${theme.palette[0]}, ${theme.palette[1]})`,
         }}
       >
+        {uploadedImage ? (
+          <img className="postcard-user-image" src={uploadedImage} alt="" style={imageStyle} />
+        ) : null}
         <div className="postcard-art-badge">Chang Gate / 阊门</div>
         <div className="postcard-art-copy">
-          <p className="eyebrow">Generated souvenir concept</p>
+          <p className="eyebrow">{uploadedImage ? 'Custom photo postcard' : 'Generated souvenir concept'}</p>
           <h3>{theme.name}</h3>
           <p>{theme.caption}</p>
         </div>
@@ -23,10 +40,9 @@ export default function PostcardPreview({ theme, favoriteSpot, collectedSpots })
           warm editorial look.
         </p>
         <p className="postcard-signoff">
-          “From Chang Gate, with water, crossings, and small discoveries.”
+          “{customMessage || 'From Chang Gate, with water, crossings, and small discoveries.'}”
         </p>
       </div>
     </article>
   );
 }
-

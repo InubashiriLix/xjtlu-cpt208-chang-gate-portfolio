@@ -1,18 +1,120 @@
+export const changGateLocation = { lng: 120.605741078035, lat: 31.315099315692006 };
+export const demoUserLocation = { lng: 120.60350126096095, lat: 31.314318747226537 };
+
 export const heritageSpots = [
   {
-    id: 'chang-gate-arrival',
-    slug: 'chang-gate-arrival',
-    name: 'Chang Gate Arrival Court',
-    shortName: 'Arrival Court',
-    category: 'Gateway',
-    distanceMeters: 120,
-    routeLegMeters: 120,
+    id: 'shantang-street',
+    slug: 'shantang-street',
+    name: 'Shantang Street',
+    shortName: 'Shantang Street',
+    category: 'Historic Street',
+    distanceMeters: 242,
+    routeLegMeters: 0,
+    walkMinutes: 3,
+    status: 'Historic street walk',
+    imageLabel: 'Historic street frontage near the canal district',
+    storyTitle: 'A street where canal memory stays busy',
+    storySnippet:
+      'Shantang Street keeps the Chang Gate walk connected to everyday heritage, shops, and canal-side memory.',
+    storyBody:
+      'Shantang Street turns the heritage route from a landmark visit into a lived street experience. Shopfronts, small thresholds, and passing visitors make the canal district feel active rather than frozen in time.',
+    notice: [
+      'Look for how storefronts, signs, and paving guide the pace of walking.',
+      'Notice where people stop to browse, photograph, or orient themselves.',
+      'Compare the street energy here with the quieter waterside stops nearby.',
+    ],
+    mission:
+      'Choose one street detail that feels strongly local and turn it into a one-line postcard caption.',
+    tags: ['Views', 'Stories', 'Family-friendly'],
+    related: ['wharf-steps-corner', 'market-lane-crossing'],
+    stamp: {
+      name: 'Shantang Seal',
+      icon: '◇',
+      accent: 'green',
+    },
+    coords: { x: 76, y: 30 },
+    location: { lng: 120.60344132167292, lat: 31.31493897464855 },
+  },
+  {
+    id: 'wharf-steps-corner',
+    slug: 'wharf-steps-corner',
+    name: 'Wharf Steps Corner',
+    shortName: 'Wharf Steps',
+    category: 'Canal Edge',
+    distanceMeters: 182,
+    routeLegMeters: 67,
     walkMinutes: 2,
+    status: 'Quiet waterside pause',
+    imageLabel: 'Stone steps leading to a quieter canal edge',
+    storyTitle: 'A waterside pause for noticing details',
+    storySnippet:
+      'Stone steps by the water create a small pause between Shantang Street and the quieter alley.',
+    storyBody:
+      'The wharf steps slow the route down after the street energy of Shantang. They invite visitors to notice water level, masonry, and the small working edges that make the canal district feel lived-in.',
+    notice: [
+      'Look at how the step edges meet the water line and nearby masonry.',
+      'Notice where people choose to stop rather than keep moving onward.',
+      'Think about which earlier stop this place connects back to emotionally.',
+    ],
+    mission:
+      'Pause at the steps and choose one texture that could become a postcard detail later.',
+    tags: ['Views', 'Stories'],
+    related: ['shantang-street', 'waterside-alley-walk'],
+    stamp: {
+      name: 'Wharf Echo',
+      icon: '◎',
+      accent: 'amber',
+    },
+    coords: { x: 84, y: 72 },
+    location: { lng: 120.60407124598505, lat: 31.315209129712553 },
+  },
+  {
+    id: 'waterside-alley-walk',
+    slug: 'waterside-alley-walk',
+    name: 'Waterside Alley Walk',
+    shortName: 'Waterside Alley',
+    category: 'Old Street',
+    distanceMeters: 125,
+    routeLegMeters: 57,
+    walkMinutes: 2,
+    status: 'Shaded and calm',
+    imageLabel: 'Narrow waterside passage with textured walls',
+    storyTitle: 'Quiet edges reveal a different tempo',
+    storySnippet:
+      'This smaller path shifts the experience from landmark hunting to noticing atmosphere.',
+    storyBody:
+      'Not every heritage moment announces itself. This alley is about texture, shade, and rhythm. It suggests how an exploration app can reward quieter noticing, not just major viewpoints, by inviting people to slow down and read atmosphere as part of place.',
+    notice: [
+      'Look for wall textures, drains, stone steps, and traces of daily maintenance.',
+      'Notice how light changes from bright canal edge to shaded alley depth.',
+      'See whether sound becomes more enclosed here than at the open water.',
+    ],
+    mission:
+      'Choose three words that describe the atmosphere here, then compare them with Shantang Street.',
+    tags: ['Stories', 'Family-friendly'],
+    related: ['wharf-steps-corner', 'chang-gate'],
+    stamp: {
+      name: 'Alley Whisper',
+      icon: '◟',
+      accent: 'teal',
+    },
+    coords: { x: 39, y: 66 },
+    location: { lng: 120.60466116593481, lat: 31.315119162538565 },
+  },
+  {
+    id: 'chang-gate',
+    slug: 'chang-gate',
+    name: 'Chang Gate',
+    shortName: 'Chang Gate',
+    category: 'Gateway',
+    distanceMeters: 0,
+    routeLegMeters: 103,
+    walkMinutes: 1,
     status: 'Open now',
     imageLabel: 'Warm stone gate framing the old quarter',
     storyTitle: 'A threshold that still feels lived-in',
     storySnippet:
-      'Begin where the old city edge still works like a real crossing, not just a backdrop.',
+      'Stand where the old city edge still works like a real crossing, not just a backdrop.',
     storyBody:
       'At Chang Gate, the most meaningful detail is movement. Locals pass through, visitors pause, and the canal rhythm quietly shapes both. This stop frames the heritage walk as something living and everyday rather than a distant history lesson.',
     notice: [
@@ -23,14 +125,14 @@ export const heritageSpots = [
     mission:
       'Capture a past-meets-present moment by photographing the gate with today’s street life in the frame.',
     tags: ['Nearby', 'Stories', 'Views'],
-    related: ['market-lane-crossing', 'willow-bridge-view'],
+    related: ['waterside-alley-walk', 'market-lane-crossing'],
     stamp: {
       name: 'Lantern Gate',
       icon: '◌',
       accent: 'amber',
     },
     coords: { x: 24, y: 46 },
-    location: { lng: 120.5988, lat: 31.3176 },
+    location: changGateLocation,
   },
   {
     id: 'market-lane-crossing',
@@ -38,9 +140,9 @@ export const heritageSpots = [
     name: 'Market Lane Crossing',
     shortName: 'Market Lane',
     category: 'Street Life',
-    distanceMeters: 230,
-    routeLegMeters: 140,
-    walkMinutes: 4,
+    distanceMeters: 30,
+    routeLegMeters: 53,
+    walkMinutes: 1,
     status: 'Busy and lively',
     imageLabel: 'Narrow lane with shop signs and soft awnings',
     storyTitle: 'Where errands, snacks, and stories overlap',
@@ -56,146 +158,14 @@ export const heritageSpots = [
     mission:
       'Find one tiny detail that feels handmade and sketch it or describe it in one sentence.',
     tags: ['Nearby', 'Stories', 'Family-friendly'],
-    related: ['chang-gate-arrival', 'waterside-alley-walk'],
+    related: ['chang-gate', 'shantang-street'],
     stamp: {
       name: 'Market Seal',
       icon: '◍',
       accent: 'orange',
     },
     coords: { x: 48, y: 34 },
-    location: { lng: 120.6036, lat: 31.3196 },
-  },
-  {
-    id: 'canal-lookout-deck',
-    slug: 'canal-lookout-deck',
-    name: 'Canal Lookout Deck',
-    shortName: 'Lookout Deck',
-    category: 'Viewpoint',
-    distanceMeters: 360,
-    routeLegMeters: 180,
-    walkMinutes: 6,
-    status: 'Best in soft daylight',
-    imageLabel: 'Canal edge with low railing and broad water view',
-    storyTitle: 'A broad pause in the walking rhythm',
-    storySnippet:
-      'The canal opens up here, making it easier to imagine goods, weather, and daily timing shaping the district.',
-    storyBody:
-      'This stop is about orientation. Looking across the water helps visitors imagine Chang Gate as part of a larger network rather than a single isolated landmark. The canal becomes an organizing line for movement, trade, and memory.',
-    notice: [
-      'Look at how reflections soften the edges of buildings and trees.',
-      'Notice where people naturally slow down to look, rest, or take photos.',
-      'Compare the openness of the water with the compression of the nearby streets.',
-    ],
-    mission:
-      'Take a 10-second still pause. What changes first: the soundscape, the light on the water, or your walking pace?',
-    tags: ['Nearby', 'Views'],
-    related: ['willow-bridge-view', 'wharf-steps-corner'],
-    stamp: {
-      name: 'Canal Ripple',
-      icon: '◜',
-      accent: 'teal',
-    },
-    coords: { x: 68, y: 54 },
-    location: { lng: 120.6076, lat: 31.3164 },
-  },
-  {
-    id: 'willow-bridge-view',
-    slug: 'willow-bridge-view',
-    name: 'Willow Bridge View',
-    shortName: 'Willow Bridge',
-    category: 'Bridge',
-    distanceMeters: 540,
-    routeLegMeters: 190,
-    walkMinutes: 8,
-    status: 'Gentle route',
-    imageLabel: 'Stone bridge with willow branches near the canal',
-    storyTitle: 'Crossings are stories too',
-    storySnippet:
-      'Bridges do more than connect two sides. They shape how people pause, look back, and continue.',
-    storyBody:
-      'At a bridge, movement becomes visible from both directions. You can watch approach, crossing, and departure in one glance. That makes this a strong place to compare the heritage landscape with the present-day habit of wandering, photographing, and meeting.',
-    notice: [
-      'Look for the best point where you can see both the bridge curve and water beneath it.',
-      'Notice whether people walk across quickly or stop halfway to look around.',
-      'Watch for framed views back toward the lanes and forward along the canal.',
-    ],
-    mission:
-      'Find the midpoint of the crossing and choose a direction that feels more inviting. Why?',
-    tags: ['Views', 'Stories', 'Family-friendly'],
-    related: ['canal-lookout-deck', 'waterside-alley-walk'],
-    stamp: {
-      name: 'Bridge Arc',
-      icon: '◠',
-      accent: 'green',
-    },
-    coords: { x: 76, y: 30 },
-    location: { lng: 120.6092, lat: 31.3202 },
-  },
-  {
-    id: 'waterside-alley-walk',
-    slug: 'waterside-alley-walk',
-    name: 'Waterside Alley Walk',
-    shortName: 'Waterside Alley',
-    category: 'Old Street',
-    distanceMeters: 460,
-    routeLegMeters: 160,
-    walkMinutes: 7,
-    status: 'Shaded and calm',
-    imageLabel: 'Narrow waterside passage with textured walls',
-    storyTitle: 'Quiet edges reveal a different tempo',
-    storySnippet:
-      'This smaller path shifts the experience from landmark hunting to noticing atmosphere.',
-    storyBody:
-      'Not every heritage moment announces itself. This alley is about texture, shade, and rhythm. It suggests how an exploration app can reward quieter noticing, not just major viewpoints, by inviting people to slow down and read atmosphere as part of place.',
-    notice: [
-      'Look for wall textures, drains, stone steps, and traces of daily maintenance.',
-      'Notice how light changes from bright canal edge to shaded alley depth.',
-      'See whether sound becomes more enclosed here than at the open water.',
-    ],
-    mission:
-      'Choose three words that describe the atmosphere here, then compare them with the canal deck.',
-    tags: ['Stories', 'Family-friendly'],
-    related: ['market-lane-crossing', 'wharf-steps-corner'],
-    stamp: {
-      name: 'Alley Whisper',
-      icon: '◟',
-      accent: 'teal',
-    },
-    coords: { x: 39, y: 66 },
-    location: { lng: 120.6018, lat: 31.3144 },
-  },
-  {
-    id: 'wharf-steps-corner',
-    slug: 'wharf-steps-corner',
-    name: 'Wharf Steps Corner',
-    shortName: 'Wharf Steps',
-    category: 'Canal Edge',
-    distanceMeters: 620,
-    routeLegMeters: 210,
-    walkMinutes: 10,
-    status: 'Good final stop',
-    imageLabel: 'Stone steps leading to a quieter canal edge',
-    storyTitle: 'End with a memory, not only a fact',
-    storySnippet:
-      'Stone steps by the water make a natural ending point for reflection and souvenir-making.',
-    storyBody:
-      'This final stop suits the postcard moment. Steps by the canal invite a pause, a look back across the route, and a personal interpretation of the walk. It is less about proving knowledge and more about turning observation into a lasting memory.',
-    notice: [
-      'Look at how the step edges meet the water line and nearby masonry.',
-      'Notice where people choose to stop rather than keep moving onward.',
-      'Think about which earlier stop this place connects back to emotionally.',
-    ],
-    mission:
-      'Pick the stop that changed your mood the most and prepare a postcard caption from here.',
-    tags: ['Views', 'Stories'],
-    related: ['canal-lookout-deck', 'waterside-alley-walk'],
-    stamp: {
-      name: 'Wharf Echo',
-      icon: '◎',
-      accent: 'amber',
-    },
-    coords: { x: 84, y: 72 },
-    location: { lng: 120.6108, lat: 31.3135 },
+    location: { lng: 120.60629106299358, lat: 31.315169442945678 },
   },
 ];
 
@@ -203,22 +173,12 @@ export const walkingRoutes = [
   {
     id: 'warm-up-loop',
     name: 'Warm-Up Canal Loop',
-    duration: '18 min',
-    distance: '0.9 km',
-    tone: 'Easy first walk',
+    duration: '5 min',
+    distance: '0.3 km',
+    tone: 'Classic line order',
     description:
-      'A short route for first-time visitors who want a clear start, one lively lane, and a strong canal viewpoint.',
-    spotIds: ['chang-gate-arrival', 'market-lane-crossing', 'canal-lookout-deck'],
-  },
-  {
-    id: 'bridge-and-breeze',
-    name: 'Bridge & Breeze Trail',
-    duration: '24 min',
-    distance: '1.3 km',
-    tone: 'Views and calm corners',
-    description:
-      'A slightly longer walk that mixes bridge views, quieter textures, and a reflective waterside ending.',
-    spotIds: ['canal-lookout-deck', 'willow-bridge-view', 'waterside-alley-walk', 'wharf-steps-corner'],
+      'A compact line connecting Shantang Street, Wharf Steps, Waterside Alley, Chang Gate, and Market Lane in the required order.',
+    spotIds: ['shantang-street', 'wharf-steps-corner', 'waterside-alley-walk', 'chang-gate', 'market-lane-crossing'],
   },
 ];
 
@@ -257,4 +217,3 @@ export const rewardMilestones = [
     reward: 'The full route feels complete as a personal heritage journey.',
   },
 ];
-

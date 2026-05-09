@@ -5,26 +5,21 @@ import FilterChips from '../components/FilterChips';
 import RouteTimeline from '../components/RouteTimeline';
 import SectionTitle from '../components/SectionTitle';
 import SpotCard from '../components/SpotCard';
+import { demoUserLocation } from '../data/spots';
 import { useAppState } from '../context/AppStateContext';
 
 const AMAP_KEY = import.meta.env.VITE_AMAP_KEY;
 const AMAP_SECURITY_KEY = import.meta.env.VITE_AMAP_SECURITY_KEY;
-const MAP_CENTER = { lng: 120.604, lat: 31.317 };
+const MAP_CENTER = demoUserLocation;
 const NEARBY_THRESHOLD = 400;
+const ROUTE_LINE_STYLE = {
+  strokeColor: '#2f8a7d',
+  strokeWeight: 4,
+  strokeOpacity: 0.76,
+  strokeStyle: 'solid',
+};
 
 const filters = ['Nearby', 'Stories', 'Views', 'Family-friendly'];
-
-function haversineMeters(lng1, lat1, lng2, lat2) {
-  const R = 6371000;
-  const dLat = ((lat2 - lat1) * Math.PI) / 180;
-  const dLng = ((lng2 - lng1) * Math.PI) / 180;
-  const a =
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos((lat1 * Math.PI) / 180) *
-    Math.cos((lat2 * Math.PI) / 180) *
-    Math.sin(dLng / 2) ** 2;
-  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-}
 
 export default function ExplorePage() {
   const { spots, walkingRoutes, selectedRoute, selectRoute, progress, isCollected } =
@@ -33,29 +28,16 @@ export default function ExplorePage() {
   const mapRef = useRef(null);
   const mapInstance = useRef(null);
   const [selectedFilter, setSelectedFilter] = useState('Nearby');
-  const [gpsStatus, setGpsStatus] = useState('idle'); // idle | locating | ready | error
-  const [computedDistances, setComputedDistances] = useState({});
-
-  const spotsWithDistances = useMemo(
-    () =>
-      spots.map((spot) => ({
-        ...spot,
-        distanceMeters: computedDistances[spot.id] ?? spot.distanceMeters,
-        walkMinutes: computedDistances[spot.id]
-          ? Math.max(1, Math.round(computedDistances[spot.id] / 80))
-          : spot.walkMinutes,
-      })),
-    [spots, computedDistances],
-  );
+  const [gpsStatus, setGpsStatus] = useState('ready'); // ready | error
 
   const filteredSpots = useMemo(
     () =>
-      spotsWithDistances.filter((spot) =>
+      spots.filter((spot) =>
         selectedFilter === 'Nearby'
           ? spot.distanceMeters <= NEARBY_THRESHOLD
           : spot.tags.includes(selectedFilter),
       ),
-    [selectedFilter, spotsWithDistances],
+    [selectedFilter, spots],
   );
 
   const routeSpots = selectedRoute.spotIds
@@ -104,40 +86,30 @@ export default function ExplorePage() {
           map.add(marker);
         });
 
-        AMap.plugin('AMap.Geolocation', () => {
-          const geolocation = new AMap.Geolocation({
-            enableHighAccuracy: true,
-            timeout: 10000,
-            showMarker: true,
-            showCircle: true,
-            panToLocation: false,
-            zoomToAccuracy: false,
-          });
-
-          setGpsStatus('locating');
-
-          geolocation.getCurrentPosition((status, result) => {
-            if (destroyed) return;
-
-            if (status === 'complete') {
-              const lat = result.position.getLat();
-              const lng = result.position.getLng();
-
-              setGpsStatus('ready');
-              map.setCenter([lng, lat]);
-
-              const dists = {};
-              spots.forEach((spot) => {
-                dists[spot.id] = Math.round(
-                  haversineMeters(lng, lat, spot.location.lng, spot.location.lat),
-                );
-              });
-              setComputedDistances(dists);
-            } else {
-              setGpsStatus('error');
-            }
-          });
+        const spotMap = {};
+        spots.forEach((spot) => {
+          spotMap[spot.id] = spot;
         });
+        const routePath = selectedRoute.spotIds
+          .map((spotId) => spotMap[spotId])
+          .filter(Boolean)
+          .map((spot) => [spot.location.lng, spot.location.lat]);
+
+        if (routePath.length > 1) {
+          map.add(new AMap.Polyline({ path: routePath, ...ROUTE_LINE_STYLE }));
+        }
+
+        const demoMarker = new AMap.Marker({
+          position: [demoUserLocation.lng, demoUserLocation.lat],
+          title: 'Demo position',
+          label: {
+            content: '<strong>Demo position</strong>',
+            direction: 'top',
+            offset: new AMap.Pixel(0, -6),
+          },
+        });
+        map.add(demoMarker);
+        map.setZoomAndCenter(16, [demoUserLocation.lng, demoUserLocation.lat]);
       } catch (err) {
         console.error('AMap init error:', err);
         setGpsStatus('error');
@@ -157,7 +129,7 @@ export default function ExplorePage() {
       case 'locating':
         return 'Locating…';
       case 'ready':
-        return 'Live GPS';
+        return 'Demo position';
       case 'error':
         return 'GPS unavailable';
       default:
@@ -168,7 +140,7 @@ export default function ExplorePage() {
   const gpsDescription = () => {
     switch (gpsStatus) {
       case 'ready':
-        return 'Live GPS shows your position and real distances to each stop.';
+        return 'Demo position is used for current distances during the presentation.';
       case 'locating':
         return 'Detecting your GPS position…';
       case 'error':
