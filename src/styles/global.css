@@ -256,6 +256,12 @@ a:focus-visible {
   border-color: rgba(47, 138, 125, 0.22);
 }
 
+.prototype-pill.gps-live {
+  background: rgba(47, 138, 125, 0.12);
+  border-color: rgba(47, 138, 125, 0.22);
+  color: var(--teal);
+}
+
 .button {
   display: inline-flex;
   align-items: center;
