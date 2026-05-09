@@ -1026,6 +1026,118 @@ a:focus-visible {
   border-radius: 2px;
 }
 
+.map-spotlist-title {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-family: "Fraunces", "Times New Roman", serif;
+  font-size: 1.5rem;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.map-spotlist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 16px;
+}
+
+.map-spotlist-item {
+  display: flex;
+  gap: 14px;
+  padding: 18px 20px;
+  background: var(--surface);
+  border: 1px solid rgba(234, 223, 205, 0.9);
+  box-shadow: var(--shadow);
+  border-radius: var(--radius-xl);
+  backdrop-filter: blur(12px);
+  animation: fade-up 420ms ease both;
+  cursor: pointer;
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.map-spotlist-item:hover {
+  transform: translateY(-2px);
+}
+
+.map-spotlist-item.is-unvisited {
+  border-left: 4px solid var(--teal);
+}
+
+.map-spotlist-item.is-visited {
+  opacity: 0.8;
+}
+
+.map-spotlist-item.is-visited:hover {
+  opacity: 1;
+}
+
+.map-spotlist-number {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(47, 138, 125, 0.12);
+  color: var(--teal);
+  font-weight: 800;
+  font-size: 0.9rem;
+  margin-top: 2px;
+}
+
+.map-spotlist-body {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.map-spotlist-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.map-spotlist-name {
+  font-family: "Fraunces", "Times New Roman", serif;
+  font-size: 1.15rem;
+  letter-spacing: -0.01em;
+  margin: 0;
+  color: var(--text);
+}
+
+.map-spotlist-snippet {
+  margin: 0;
+  color: var(--text-soft);
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.map-spotlist-footer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.map-spotlist-stamp-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-soft);
+}
+
+.map-spotlist-hint {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--teal);
+  margin-left: auto;
+}
+
 @media (min-width: 720px) {
   .hero {
     grid-template-columns: 1.2fr 0.8fr;
