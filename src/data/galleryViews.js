@@ -82,3 +82,64 @@ export const galleryViews = [
   },
 ];
 
+const galleryTranslations = {
+  'chang-gate-facade': {
+    title: '阊门立面',
+    lens: '地标核心',
+    alt: '传统亭阁屋顶下方带有三个拱门开口的阊门立面',
+    description: '三个开口和亭阁构成最强的地标视角，适合作为路线的核心图像。',
+  },
+  'across-the-canal': {
+    title: '运河对岸',
+    lens: '收束记忆',
+    alt: '从运河对岸看到的临水建筑、树木、船只和水面',
+    description: '运河边的全景把水、船、树和老建筑连接成最安静的结尾记忆。',
+  },
+  'gate-wall-approach': {
+    title: '走向城墙与城门',
+    lens: '路线门槛',
+    alt: '沿城墙通向阊门亭阁的上层步道',
+    description: '上层步道把游客引向亭阁，让阊门成为清晰的起点门槛。',
+  },
+  'city-through-wall': {
+    title: '从城墙看城市',
+    lens: '过去与现在',
+    alt: '砖墙开口中框住街道生活、树木和现代高楼',
+    description: '砖墙开口框住街道生活、树木和现代高楼，显示老城门仍与日常流动相连。',
+  },
+  'wall-working-edge': {
+    title: '城墙、天空与工作边界',
+    lens: '城市对比',
+    alt: '老城墙和亭阁旁边是当代路径与施工边界',
+    description: '老城墙与当代路径和工作边界并置，让路线呈现可见的古今对照。',
+  },
+  'green-gate-arch': {
+    title: '绿色城门拱',
+    lens: '阴凉通道',
+    alt: '藤蔓覆盖的石拱，上方可见亭阁',
+    description: '藤蔓柔化了石拱，使这个通道显得更阴凉、缓慢和亲近。',
+  },
+  'canal-under-arch': {
+    title: '拱下运河',
+    lens: '水的节奏',
+    alt: '从绿荫拱门下看到的运河船只和柳树',
+    description: '从阴影拱门下看，船和水成为步行的主要节奏。',
+  },
+  'arrival-at-the-gate': {
+    title: '到达城门',
+    lens: '活跃穿行',
+    alt: '街面视角下车辆和行人穿过阊门',
+    description: '更繁忙的街面视角显示，城门是活跃通道，而不是静态纪念物。',
+  },
+};
+
+export function localizeGalleryView(view, language = 'en') {
+  if (language !== 'zh') {
+    return view;
+  }
+
+  return {
+    ...view,
+    ...galleryTranslations[view.id],
+  };
+}

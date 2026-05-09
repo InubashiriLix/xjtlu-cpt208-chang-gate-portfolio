@@ -1,24 +1,24 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { demoUserLocation, heritageSpots, walkingRoutes } from '../data/spots';
+import {
+  demoUserLocation,
+  heritageSpots,
+  localizeRoute,
+  localizeSpot,
+  walkingRoutes,
+} from '../data/spots';
 
 const AppStateContext = createContext(null);
 const STORAGE_KEY = 'chang-gate-canal-quest-progress';
-const LEGACY_SPOT_IDS = {
-  'chang-gate-arrival': 'chang-gate',
-  'willow-bridge-view': null,
-  'canal-lookout-deck': null,
-};
+const LANGUAGE_STORAGE_KEY = 'chang-gate-heritage-language';
 const LEGACY_ROUTE_IDS = {
   'bridge-and-breeze': 'warm-up-loop',
 };
 
 const defaultProgress = {
-  collectedSpotIds: ['chang-gate', 'market-lane-crossing'],
   selectedRouteId: 'warm-up-loop',
 };
 
 const resetProgress = {
-  collectedSpotIds: [],
   selectedRouteId: defaultProgress.selectedRouteId,
 };
 
@@ -36,21 +36,12 @@ function haversineMeters(lng1, lat1, lng2, lat2) {
 }
 
 function sanitizeProgress(progress) {
-  const validSpotIds = new Set(heritageSpots.map((spot) => spot.id));
   const validRouteIds = new Set(walkingRoutes.map((route) => route.id));
-  const collectedSpotIds = [
-    ...new Set(
-      progress.collectedSpotIds
-        .map((spotId) => LEGACY_SPOT_IDS[spotId] ?? spotId)
-        .filter((spotId) => spotId && validSpotIds.has(spotId)),
-    ),
-  ];
   const selectedRouteId =
     LEGACY_ROUTE_IDS[progress.selectedRouteId] ?? progress.selectedRouteId;
 
   return {
     ...progress,
-    collectedSpotIds,
     selectedRouteId: validRouteIds.has(selectedRouteId)
       ? selectedRouteId
       : defaultProgress.selectedRouteId,
@@ -74,18 +65,30 @@ function readStoredProgress() {
 
 export function AppStateProvider({ children }) {
   const [progress, setProgress] = useState(readStoredProgress);
+  const [language, setLanguage] = useState(() => {
+    if (typeof window === 'undefined') {
+      return 'en';
+    }
+
+    return window.localStorage.getItem(LANGUAGE_STORAGE_KEY) === 'zh' ? 'zh' : 'en';
+  });
   const [currentLocation, setCurrentLocation] = useState(demoUserLocation);
   const [locationStatus, setLocationStatus] = useState('ready');
+  const [chatMessages, setChatMessages] = useState([]);
 
   useEffect(() => {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
   }, [progress]);
 
+  useEffect(() => {
+    window.localStorage.setItem(LANGUAGE_STORAGE_KEY, language);
+  }, [language]);
+
   const spotsWithDistances = useMemo(
     () =>
       heritageSpots.map((spot) => {
         if (!currentLocation) {
-          return { ...spot, isDistanceLive: false };
+          return { ...localizeSpot(spot, language), isDistanceLive: false };
         }
 
         const distanceMeters = Math.round(
@@ -98,78 +101,70 @@ export function AppStateProvider({ children }) {
         );
 
         return {
-          ...spot,
+          ...localizeSpot(spot, language),
           distanceMeters,
           walkMinutes: Math.max(1, Math.round(distanceMeters / 80)),
           isDistanceLive: true,
         };
       }),
-    [currentLocation],
-  );
-
-  const collectedSpots = useMemo(
-    () => heritageSpots.filter((spot) => progress.collectedSpotIds.includes(spot.id)),
-    [progress.collectedSpotIds],
+    [currentLocation, language],
   );
 
   const stats = useMemo(() => {
     const totalSpots = heritageSpots.length;
-    const collectedCount = progress.collectedSpotIds.length;
-    const progressPercent = Math.round((collectedCount / totalSpots) * 100);
-    const walkedMeters = collectedSpots.reduce(
+    const walkedMeters = spotsWithDistances.reduce(
       (sum, spot) => sum + spot.routeLegMeters,
       0,
     );
 
     return {
-      collectedCount,
       totalSpots,
-      progressPercent,
       walkedMeters,
-      postcardUnlocked: collectedCount >= 3,
     };
-  }, [collectedSpots, progress.collectedSpotIds.length]);
+  }, [spotsWithDistances]);
 
   const selectedRoute = useMemo(
-    () => walkingRoutes.find((route) => route.id === progress.selectedRouteId) ?? walkingRoutes[0],
-    [progress.selectedRouteId],
+    () =>
+      localizeRoute(
+        walkingRoutes.find((route) => route.id === progress.selectedRouteId) ?? walkingRoutes[0],
+        language,
+      ),
+    [language, progress.selectedRouteId],
+  );
+
+  const localizedRoutes = useMemo(
+    () => walkingRoutes.map((route) => localizeRoute(route, language)),
+    [language],
   );
 
   const value = useMemo(
     () => ({
       spots: spotsWithDistances,
-      walkingRoutes,
+      walkingRoutes: localizedRoutes,
       progress,
-      collectedSpots,
       selectedRoute,
       stats,
       currentLocation,
       locationStatus,
+      language,
+      isChinese: language === 'zh',
+      toggleLanguage: () =>
+        setLanguage((current) => (current === 'zh' ? 'en' : 'zh')),
+      chatMessages,
+      setChatMessages,
       updateCurrentLocation: (lng, lat) => {
         setCurrentLocation({ lng, lat });
         setLocationStatus('ready');
       },
-      collectStamp: (spotId) =>
-        setProgress((current) => {
-          if (current.collectedSpotIds.includes(spotId)) {
-            return current;
-          }
-
-          return {
-            ...current,
-            collectedSpotIds: [...current.collectedSpotIds, spotId],
-          };
-        }),
       selectRoute: (routeId) =>
         setProgress((current) => ({
           ...current,
           selectedRouteId: routeId,
         })),
       resetVisitHistory: () => setProgress(resetProgress),
-      isCollected: (spotId) => progress.collectedSpotIds.includes(spotId),
       getSpotBySlug: (slug) => spotsWithDistances.find((spot) => spot.slug === slug),
     }),
-    [collectedSpots, currentLocation, locationStatus, progress, selectedRoute, spotsWithDistances, stats],
+    [chatMessages, currentLocation, language, localizedRoutes, locationStatus, progress, selectedRoute, spotsWithDistances, stats],
   );
 
   return (

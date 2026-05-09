@@ -1,4 +1,4 @@
-# Canal Quest: Chang Gate
+# Chang Gate Heritage
 
 A mobile-first React + Vite heritage exploration prototype for the Human-Centric Computing coursework project:
 
@@ -7,7 +7,7 @@ A mobile-first React + Vite heritage exploration prototype for the Human-Centric
 - Audience: Visitors and residents
 - Context: Onsite exploration
 
-The prototype is designed as a polished frontend-only web app that supports playful storytelling, location-flavoured discovery, collectible memory stamps, and a simulated AI postcard souvenir flow.
+The prototype is designed as a polished frontend-only web app that supports playful storytelling, location-flavoured discovery, collectible memory stamps, and a simulated Ask postcard souvenir flow.
 
 ## Highlights
 
@@ -15,7 +15,7 @@ The prototype is designed as a polished frontend-only web app that supports play
 - Bright warm visual system tailored to Chang Gate heritage exploration
 - Story Hunt flow with nearby spots, short story snippets, and playful missions
 - Stamp collection booklet with visible progress and unlock milestones
-- Simulated AI postcard generator with loading and preview states
+- Simulated Ask postcard generator with loading and preview states
 - Static-hosting-safe routing via `HashRouter`
 - GitHub Pages deployment workflow included
 
@@ -73,5 +73,5 @@ The app uses `HashRouter` and `base: './'` in Vite so it works safely on GitHub 
 
 - All content is mock local data for frontend prototyping.
 - Stamp progress is persisted in `localStorage`.
-- Nearby distance, GPS feel, XR preview, and AI postcard generation are simulated in the UI only.
-- The structure is intentionally ready for future location, XR, or AI integrations.
+- Nearby distance, GPS feel, XR preview, and Ask postcard generation are simulated in the UI only.
+- The structure is intentionally ready for future location, XR, or Ask integrations.

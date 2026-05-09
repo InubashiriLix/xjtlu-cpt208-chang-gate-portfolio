@@ -9,7 +9,7 @@ export const aboutCards = [
   },
   {
     title: 'Playful, Not Gimmicky',
-    body: 'The experience uses missions, stamps, and a souvenir postcard to create motivation without turning the site into a game overlay.',
+    body: 'The experience uses missions and a souvenir postcard to create motivation without turning the site into a game overlay.',
   },
 ];
 
@@ -24,7 +24,6 @@ export const futureModules = [
   },
   {
     title: 'Generative Memory Writer',
-    body: 'The postcard generator can later connect to an AI service to personalize copy from route, mood, and user reflections.',
+    body: 'The postcard generator can later connect to an Ask service to personalize copy from route, mood, and user reflections.',
   },
 ];
-

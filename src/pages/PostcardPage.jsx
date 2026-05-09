@@ -2,7 +2,8 @@ import { useEffect, useMemo, useState } from 'react';
 import PostcardPreview from '../components/PostcardPreview';
 import SectionTitle from '../components/SectionTitle';
 import { useAppState } from '../context/AppStateContext';
-import { postcardThemes } from '../data/postcardThemes';
+import { getFavoriteSpotPostcardLine } from '../data/spots';
+import { localizePostcardTheme, postcardThemes } from '../data/postcardThemes';
 
 const DEFAULT_IMAGE_EDIT = {
   zoom: 118,
@@ -42,7 +43,7 @@ function drawCoverImage(ctx, image, x, y, width, height, edit) {
 }
 
 function wrapText(ctx, text, x, y, maxWidth, lineHeight, maxLines = 3) {
-  const words = text.split(/\s+/);
+  const words = /\s/.test(text) ? text.split(/\s+/) : Array.from(text);
   let line = '';
   let lines = 0;
 
@@ -67,11 +68,13 @@ function wrapText(ctx, text, x, y, maxWidth, lineHeight, maxLines = 3) {
 async function renderPostcardBlob({
   theme,
   favoriteSpot,
-  collectedSpots,
+  spots,
   uploadedImage,
   imageEdit,
   customMessage,
+  language,
 }) {
+  const isChinese = language === 'zh';
   const canvas = document.createElement('canvas');
   canvas.width = 1200;
   canvas.height = 760;
@@ -117,15 +120,17 @@ async function renderPostcardBlob({
   ctx.fillRect(0, artHeight, canvas.width, canvas.height - artHeight);
   ctx.fillStyle = '#d97b35';
   ctx.font = '800 20px "Plus Jakarta Sans", Arial, sans-serif';
-  ctx.fillText('ROUTE MEMORY', 64, 504);
+  ctx.fillText(isChinese ? '路线记忆' : 'ROUTE MEMORY', 64, 504);
   ctx.fillStyle = '#24323a';
   ctx.font = '700 36px Georgia, serif';
-  wrapText(ctx, `${favoriteSpot.name} became the anchor of this walk.`, 64, 552, 920, 44, 2);
+  wrapText(ctx, getFavoriteSpotPostcardLine(favoriteSpot, language), 64, 552, 920, 44, 2);
   ctx.fillStyle = '#5f6b71';
   ctx.font = '500 24px "Plus Jakarta Sans", Arial, sans-serif';
   wrapText(
     ctx,
-    `Built from ${collectedSpots.length} visited stops and a ${theme.mood.toLowerCase()} mood selection.`,
+    isChinese
+      ? `由 ${spots.length} 个地点和“${theme.mood}”氛围生成。`
+      : `Built from ${spots.length} stops and a ${theme.mood.toLowerCase()} mood selection.`,
     64,
     636,
     960,
@@ -136,7 +141,7 @@ async function renderPostcardBlob({
   ctx.font = 'italic 25px Georgia, serif';
   wrapText(
     ctx,
-    `"${customMessage || 'From Chang Gate, with water, crossings, and small discoveries.'}"`,
+    `"${customMessage || (isChinese ? '从阊门出发，带着水岸、穿行和小发现。' : 'From Chang Gate, with water, crossings, and small discoveries.')}"`,
     64,
     712,
     960,
@@ -148,28 +153,43 @@ async function renderPostcardBlob({
 }
 
 export default function PostcardPage() {
-  const { collectedSpots, selectedRoute, stats } = useAppState();
+  const { isChinese, language, spots, selectedRoute } = useAppState();
   const [selectedThemeId, setSelectedThemeId] = useState(postcardThemes[0].id);
-  const [favoriteSpotId, setFavoriteSpotId] = useState(collectedSpots[0]?.id ?? '');
+  const [favoriteSpotId, setFavoriteSpotId] = useState(spots[0]?.id ?? '');
   const [status, setStatus] = useState('idle');
   const [helperMessage, setHelperMessage] = useState('');
   const [uploadedImage, setUploadedImage] = useState('');
   const [uploadedImageName, setUploadedImageName] = useState('');
   const [imageEdit, setImageEdit] = useState(DEFAULT_IMAGE_EDIT);
-  const [customMessage, setCustomMessage] = useState(
-    'From Chang Gate, with water, crossings, and small discoveries.',
-  );
+  const defaultMessage = isChinese
+    ? '从阊门出发，带着水岸、穿行和小发现。'
+    : 'From Chang Gate, with water, crossings, and small discoveries.';
+  const [customMessage, setCustomMessage] = useState(defaultMessage);
 
   const selectedTheme =
-    postcardThemes.find((theme) => theme.id === selectedThemeId) ?? postcardThemes[0];
+    localizePostcardTheme(
+      postcardThemes.find((theme) => theme.id === selectedThemeId) ?? postcardThemes[0],
+      language,
+    );
   const favoriteSpot =
-    collectedSpots.find((spot) => spot.id === favoriteSpotId) ?? collectedSpots[0];
+    spots.find((spot) => spot.id === favoriteSpotId) ?? spots[0];
 
   useEffect(() => {
-    if (!favoriteSpotId && collectedSpots[0]) {
-      setFavoriteSpotId(collectedSpots[0].id);
+    if (!favoriteSpotId && spots[0]) {
+      setFavoriteSpotId(spots[0].id);
     }
-  }, [collectedSpots, favoriteSpotId]);
+  }, [spots, favoriteSpotId]);
+
+  useEffect(() => {
+    setCustomMessage((current) => {
+      const defaults = [
+        'From Chang Gate, with water, crossings, and small discoveries.',
+        '从阊门出发，带着水岸、穿行和小发现。',
+      ];
+
+      return defaults.includes(current) ? defaultMessage : current;
+    });
+  }, [defaultMessage]);
 
   useEffect(() => {
     if (status !== 'loading') {
@@ -191,16 +211,17 @@ export default function PostcardPage() {
   const postcardPayload = {
     theme: selectedTheme,
     favoriteSpot,
-    collectedSpots,
+    spots,
     uploadedImage,
     imageEdit,
     customMessage,
+    language,
   };
 
   const updateEdit = (key, value) => {
     setImageEdit((current) => ({ ...current, [key]: Number(value) }));
     if (status === 'ready') {
-      setHelperMessage('Preview updated. Download or share again to export the latest version.');
+      setHelperMessage(isChinese ? '预览已更新。再次下载即可导出最新版本。' : 'Preview updated. Download or share again to export the latest version.');
     }
   };
 
@@ -209,7 +230,7 @@ export default function PostcardPage() {
     if (!file) return;
 
     if (!file.type.startsWith('image/')) {
-      setHelperMessage('Please upload an image file.');
+      setHelperMessage(isChinese ? '请上传图片文件。' : 'Please upload an image file.');
       return;
     }
 
@@ -218,19 +239,19 @@ export default function PostcardPage() {
       setUploadedImage(String(reader.result));
       setUploadedImageName(file.name);
       setStatus('ready');
-      setHelperMessage('Photo loaded. Adjust it and export the postcard.');
+      setHelperMessage(isChinese ? '照片已加载。调整后即可导出明信片。' : 'Photo loaded. Adjust it and export the postcard.');
     };
     reader.readAsDataURL(file);
   };
 
   const createPostcardBlob = async () => {
     if (!favoriteSpot) {
-      throw new Error('Pick a favorite spot before exporting.');
+      throw new Error(isChinese ? '导出前请选择一个最喜欢的地点。' : 'Pick a favorite spot before exporting.');
     }
 
     const blob = await renderPostcardBlob(postcardPayload);
     if (!blob) {
-      throw new Error('Could not render postcard image.');
+      throw new Error(isChinese ? '无法生成明信片图片。' : 'Could not render postcard image.');
     }
 
     return blob;
@@ -247,7 +268,7 @@ export default function PostcardPage() {
       link.click();
       link.remove();
       URL.revokeObjectURL(url);
-      setHelperMessage('Downloaded chang-gate-postcard.png.');
+      setHelperMessage(isChinese ? '已下载 chang-gate-postcard.png。' : 'Downloaded chang-gate-postcard.png.');
     } catch (err) {
       setHelperMessage(err.message);
     }
@@ -255,24 +276,34 @@ export default function PostcardPage() {
 
   return (
     <div className="page-stack">
-      {!stats.postcardUnlocked ? (
-        <section className="map-error-banner">
-          <p>Postcard studio is open in preview mode.</p>
-          <p className="map-error-hint">
-            The reward still unlocks after 3 stamps in the journey, but this editor is available for presentation.
-          </p>
+      {status === 'ready' && favoriteSpot ? (
+        <section className="page-stack">
+          <PostcardPreview
+            theme={selectedTheme}
+            favoriteSpot={favoriteSpot}
+            uploadedImage={uploadedImage}
+            imageEdit={imageEdit}
+            customMessage={customMessage}
+          />
+
+          <div className="card postcard-actions">
+            <button type="button" className="button button-primary" onClick={downloadPostcard}>
+              {isChinese ? '下载明信片 PNG' : 'Download postcard PNG'}
+            </button>
+            {helperMessage ? <p className="generator-note">{helperMessage}</p> : null}
+          </div>
         </section>
       ) : null}
 
       <section className="card postcard-controls">
         <SectionTitle
-          eyebrow="Postcard studio"
-          title="Upload, edit, and export a custom keepsake"
-          description="Choose a photo, adjust the crop and mood, then download the postcard."
+          eyebrow={isChinese ? '明信片工作室' : 'Postcard studio'}
+          title={isChinese ? '上传、编辑并导出自定义纪念卡' : 'Upload, edit, and export a custom keepsake'}
+          description={isChinese ? '选择照片，调整裁切和氛围，然后下载明信片。' : 'Choose a photo, adjust the crop and mood, then download the postcard.'}
         />
 
         <div className="selection-block">
-          <p className="selection-label">Selected route</p>
+          <p className="selection-label">{isChinese ? '已选路线' : 'Selected route'}</p>
           <div className="selection-card">
             <strong>{selectedRoute.name}</strong>
             <span>{routeSummary}</span>
@@ -280,39 +311,57 @@ export default function PostcardPage() {
         </div>
 
         <div className="selection-block">
-          <p className="selection-label">Upload postcard photo</p>
-          <label className="upload-card">
-            <input type="file" accept="image/*" onChange={handleImageUpload} />
-            <span>{uploadedImageName || 'Choose image from device'}</span>
-          </label>
+          <p className="selection-label">{isChinese ? '上传明信片照片' : 'Upload postcard photo'}</p>
+          {uploadedImage ? (
+            <div className="upload-card upload-card--active">
+              <span>{uploadedImageName}</span>
+              <button
+                type="button"
+                className="button button-secondary button-small"
+                onClick={() => {
+                  setUploadedImage('');
+                  setUploadedImageName('');
+                  setImageEdit(DEFAULT_IMAGE_EDIT);
+                  setHelperMessage('');
+                }}
+              >
+                {isChinese ? '移除图片' : 'Remove image'}
+              </button>
+            </div>
+          ) : (
+            <label className="upload-card">
+              <input type="file" accept="image/*" onChange={handleImageUpload} />
+              <span>{isChinese ? '从设备选择图片' : 'Choose image from device'}</span>
+            </label>
+          )}
         </div>
 
         {uploadedImage ? (
           <div className="selection-block">
-            <p className="selection-label">Edit photo</p>
+            <p className="selection-label">{isChinese ? '编辑照片' : 'Edit photo'}</p>
             <div className="edit-grid">
               <label>
-                <span>Zoom</span>
+                <span>{isChinese ? '缩放' : 'Zoom'}</span>
                 <input type="range" min="100" max="220" value={imageEdit.zoom} onChange={(e) => updateEdit('zoom', e.target.value)} />
               </label>
               <label>
-                <span>Horizontal</span>
+                <span>{isChinese ? '水平位置' : 'Horizontal'}</span>
                 <input type="range" min="-100" max="100" value={imageEdit.x} onChange={(e) => updateEdit('x', e.target.value)} />
               </label>
               <label>
-                <span>Vertical</span>
+                <span>{isChinese ? '垂直位置' : 'Vertical'}</span>
                 <input type="range" min="-100" max="100" value={imageEdit.y} onChange={(e) => updateEdit('y', e.target.value)} />
               </label>
               <label>
-                <span>Brightness</span>
+                <span>{isChinese ? '亮度' : 'Brightness'}</span>
                 <input type="range" min="70" max="135" value={imageEdit.brightness} onChange={(e) => updateEdit('brightness', e.target.value)} />
               </label>
               <label>
-                <span>Contrast</span>
+                <span>{isChinese ? '对比度' : 'Contrast'}</span>
                 <input type="range" min="75" max="145" value={imageEdit.contrast} onChange={(e) => updateEdit('contrast', e.target.value)} />
               </label>
               <label>
-                <span>Saturation</span>
+                <span>{isChinese ? '饱和度' : 'Saturation'}</span>
                 <input type="range" min="60" max="155" value={imageEdit.saturation} onChange={(e) => updateEdit('saturation', e.target.value)} />
               </label>
             </div>
@@ -321,40 +370,45 @@ export default function PostcardPage() {
               className="button button-secondary button-small"
               onClick={() => setImageEdit(DEFAULT_IMAGE_EDIT)}
             >
-              Reset edits
+              {isChinese ? '重置编辑' : 'Reset edits'}
             </button>
           </div>
         ) : null}
 
-        <div className="selection-block">
-          <p className="selection-label">Choose a mood theme</p>
-          <div className="theme-grid">
-            {postcardThemes.map((theme) => (
-              <button
-                key={theme.id}
-                type="button"
-                className={`theme-card${selectedThemeId === theme.id ? ' is-selected' : ''}`}
-                onClick={() => setSelectedThemeId(theme.id)}
-                aria-pressed={selectedThemeId === theme.id}
-              >
-                <div
-                  className="theme-swatches"
-                  aria-hidden="true"
-                  style={{
-                    background: `linear-gradient(135deg, ${theme.palette[0]}, ${theme.palette[1]}, ${theme.palette[2]})`,
-                  }}
-                />
-                <strong>{theme.name}</strong>
-                <span>{theme.mood}</span>
-              </button>
-            ))}
+        {!uploadedImage ? (
+          <div className="selection-block">
+            <p className="selection-label">{isChinese ? '选择氛围主题' : 'Choose a mood theme'}</p>
+            <div className="theme-grid">
+              {postcardThemes.map((theme) => {
+                const displayTheme = localizePostcardTheme(theme, language);
+                return (
+                <button
+                  key={theme.id}
+                  type="button"
+                  className={`theme-card${selectedThemeId === theme.id ? ' is-selected' : ''}`}
+                  onClick={() => setSelectedThemeId(theme.id)}
+                  aria-pressed={selectedThemeId === theme.id}
+                >
+                  <div
+                    className="theme-swatches"
+                    aria-hidden="true"
+                    style={{
+                      background: `linear-gradient(135deg, ${theme.palette[0]}, ${theme.palette[1]}, ${theme.palette[2]})`,
+                    }}
+                  />
+                  <strong>{displayTheme.name}</strong>
+                  <span>{displayTheme.mood}</span>
+                </button>
+                );
+              })}
+            </div>
           </div>
-        </div>
+        ) : null}
 
         <div className="selection-block">
-          <p className="selection-label">Pick a favorite visited spot</p>
+          <p className="selection-label">{isChinese ? '选择最喜欢的地点' : 'Pick a favorite spot'}</p>
           <div className="favorite-grid">
-            {collectedSpots.map((spot) => (
+            {spots.map((spot) => (
               <button
                 key={spot.id}
                 type="button"
@@ -369,7 +423,7 @@ export default function PostcardPage() {
         </div>
 
         <div className="selection-block">
-          <p className="selection-label">Postcard message</p>
+          <p className="selection-label">{isChinese ? '明信片留言' : 'Postcard message'}</p>
           <textarea
             className="postcard-message-input"
             value={customMessage}
@@ -389,35 +443,15 @@ export default function PostcardPage() {
             }}
             disabled={!favoriteSpot}
           >
-            {status === 'loading' ? 'Making postcard...' : 'Make postcard'}
+            {status === 'loading' ? (isChinese ? '正在制作明信片...' : 'Making postcard...') : (isChinese ? '制作明信片' : 'Make postcard')}
           </button>
           <p className="generator-note" aria-live="polite">
             {status === 'loading'
-              ? 'Composing your photo, route memory, and postcard layout.'
-              : 'Upload a photo or use the theme background, then export the final card.'}
+              ? isChinese ? '正在组合照片、路线记忆和明信片版式。' : 'Composing your photo, route memory, and postcard layout.'
+              : isChinese ? '上传照片或使用主题背景，然后导出最终卡片。' : 'Upload a photo or use the theme background, then export the final card.'}
           </p>
         </div>
       </section>
-
-      {status === 'ready' && favoriteSpot ? (
-        <section className="page-stack">
-          <PostcardPreview
-            theme={selectedTheme}
-            favoriteSpot={favoriteSpot}
-            collectedSpots={collectedSpots}
-            uploadedImage={uploadedImage}
-            imageEdit={imageEdit}
-            customMessage={customMessage}
-          />
-
-          <div className="card postcard-actions">
-            <button type="button" className="button button-primary" onClick={downloadPostcard}>
-              Download postcard PNG
-            </button>
-            {helperMessage ? <p className="generator-note">{helperMessage}</p> : null}
-          </div>
-        </section>
-      ) : null}
     </div>
   );
 }

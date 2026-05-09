@@ -1,19 +1,19 @@
 import { NavLink } from 'react-router-dom';
+import { useAppState } from '../context/AppStateContext';
 
 const navItems = [
-  { to: '/', label: 'Home' },
-  { to: '/map', label: 'Map' },
-  { to: '/explore', label: 'Explore' },
-  { to: '/gallery', label: 'Gallery' },
-  { to: '/stamps', label: 'Stamps' },
-  { to: '/postcard', label: 'Postcard' },
-  { to: '/deepseek', label: 'AI' },
-  { to: '/about', label: 'About' },
+  { to: '/', label: 'Home', labelZh: '首页' },
+  { to: '/map', label: 'Map', labelZh: '地图' },
+  { to: '/gallery', label: 'Gallery', labelZh: '图集' },
+  { to: '/postcard', label: 'Postcard', labelZh: '明信片' },
+  { to: '/deepseek', label: 'Ask', labelZh: '提问' },
 ];
 
 export default function BottomNav() {
+  const { isChinese } = useAppState();
+
   return (
-    <nav className="bottom-nav" aria-label="Primary">
+    <nav className="bottom-nav" aria-label={isChinese ? '主导航' : 'Primary'}>
       {navItems.map((item) => (
         <NavLink
           key={item.to}
@@ -23,7 +23,7 @@ export default function BottomNav() {
           }
           end={item.to === '/'}
         >
-          <span>{item.label}</span>
+          <span>{isChinese ? item.labelZh : item.label}</span>
         </NavLink>
       ))}
     </nav>

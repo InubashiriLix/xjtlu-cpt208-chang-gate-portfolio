@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AMapLoader from '@amap/amap-jsapi-loader';
-import { changGateLocation, heritageSpots, walkingRoutes } from '../data/spots';
 import { useAppState } from '../context/AppStateContext';
+import { changGateLocation, getNextSpotOnRoute } from '../data/spots';
 
 const AMAP_KEY = import.meta.env.VITE_AMAP_KEY;
 const AMAP_SECURITY_KEY = import.meta.env.VITE_AMAP_SECURITY_KEY;
@@ -22,11 +22,13 @@ export default function MapPage() {
   const infoRef = useRef(null);
   const AMapRef = useRef(null);
   const navigate = useNavigate();
-  const { isCollected } = useAppState();
+  const { isChinese, spots: heritageSpots, walkingRoutes } = useAppState();
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(null);
 
   function makeInfoContent(spot) {
+    const nextSpot = getNextSpotOnRoute(spot.id, walkingRoutes[0], heritageSpots);
+
     return `
       <div style="padding:8px 4px;min-width:160px">
         <div style="font-size:0.75rem;color:#d97b35;text-transform:uppercase;letter-spacing:0.1em;font-weight:700;margin-bottom:4px">
@@ -38,11 +40,14 @@ export default function MapPage() {
         <p style="font-size:0.85rem;color:#5f6b71;margin:0 0 8px;line-height:1.5">
           ${spot.storySnippet}
         </p>
+        <p style="font-size:0.8rem;color:#2f8a7d;margin:0 0 10px;line-height:1.45;font-weight:700">
+          ${nextSpot ? `${isChinese ? '路线下一站' : 'Next on route'}: ${nextSpot.name}` : isChinese ? '这是路线最后一站' : 'Final stop on this route'}
+        </p>
         <button
           data-spot-slug="${spot.slug}"
           style="background:#d97b35;color:white;border:0;border-radius:999px;padding:8px 18px;font-size:0.85rem;font-weight:700;cursor:pointer"
         >
-          View details →
+          ${isChinese ? '打开地点' : 'Open spot'} →
         </button>
       </div>
     `;
@@ -63,11 +68,11 @@ export default function MapPage() {
 
     map.setZoom(17);
     map.panTo([spot.location.lng, spot.location.lat]);
-  }, []);
+  }, [isChinese]);
 
   const initMap = useCallback(async () => {
     if (!AMAP_KEY) {
-      setError('Missing VITE_AMAP_KEY in .env');
+      setError(isChinese ? '缺少 .env 中的 VITE_AMAP_KEY' : 'Missing VITE_AMAP_KEY in .env');
       return;
     }
 
@@ -141,9 +146,9 @@ export default function MapPage() {
       map.setZoomAndCenter(16, [MAP_CENTER.lng, MAP_CENTER.lat]);
     } catch (err) {
       console.error('AMap init error:', err);
-      setError('Failed to load map. Check your API key and network.');
+      setError(isChinese ? '地图加载失败。请检查 API key 和网络。' : 'Failed to load map. Check your API key and network.');
     }
-  }, []);
+  }, [heritageSpots, isChinese, walkingRoutes]);
 
   useEffect(() => {
     initMap();
@@ -180,7 +185,9 @@ export default function MapPage() {
         <div className="map-error-banner">
           <p>{error}</p>
           <p className="map-error-hint">
-            Make sure VITE_AMAP_KEY is set in .env and the key has JS API access enabled.
+            {isChinese
+              ? '请确认 .env 已设置 VITE_AMAP_KEY，并且 key 已启用 JS API。'
+              : 'Make sure VITE_AMAP_KEY is set in .env and the key has JS API access enabled.'}
           </p>
         </div>
       )}
@@ -207,16 +214,17 @@ export default function MapPage() {
 
       <section className="section-block">
         <h2 className="map-spotlist-title">
-          <span className="eyebrow">Walking route</span>
-          All Stops in Order
+          <span className="eyebrow">{isChinese ? '步行路线' : 'Walking route'}</span>
+          {isChinese ? '所有地点顺序' : 'All Stops in Order'}
         </h2>
         <ol className="map-spotlist">
           {heritageSpots.map((spot, i) => {
-            const visited = isCollected(spot.id);
+            const nextSpot = getNextSpotOnRoute(spot.id, walkingRoutes[0], heritageSpots);
+
             return (
               <li
                 key={spot.id}
-                className={`map-spotlist-item${visited ? ' is-visited' : ' is-unvisited'}`}
+                className="map-spotlist-item is-unvisited"
                 onClick={() => handleSpotClick(spot)}
                 role="button"
                 tabIndex={0}
@@ -227,19 +235,19 @@ export default function MapPage() {
                   <div className="map-spotlist-top">
                     <span className="spot-category">{spot.category}</span>
                     <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
-                      {visited && <span className="status-pill is-collected">Visited</span>}
-                      <span className="tag-chip">{spot.walkMinutes} min · {spot.distanceMeters}m</span>
+                      <span className="tag-chip">{isChinese ? `${spot.walkMinutes} 分钟` : `${spot.walkMinutes} min`} · {spot.distanceMeters}m</span>
                     </div>
                   </div>
                   <h3 className="map-spotlist-name">{spot.name}</h3>
                   <p className="map-spotlist-snippet">{spot.storySnippet}</p>
+                  <p className="map-spotlist-next">
+                    {nextSpot ? `${isChinese ? '下一站' : 'Next spot'}: ${nextSpot.name}` : isChinese ? '这是路线最后一站' : 'Final spot on this route'}
+                  </p>
                   <div className="map-spotlist-footer">
-                    <span className="stamp-mark" aria-hidden="true">{spot.stamp.icon}</span>
-                    <span className="map-spotlist-stamp-name">{spot.stamp.name}</span>
-                    <span className="map-spotlist-hint">Show on map →</span>
+                    <span className="map-spotlist-hint">{isChinese ? '在地图显示' : 'Show on map'} →</span>
                     <a className="button button-secondary button-small" href={`/spots/${spot.slug}`}
                        onClick={(e) => { e.preventDefault(); navigate(`/spots/${spot.slug}`); }}>
-                      Open spot
+                      {isChinese ? '打开地点' : 'Open spot'}
                     </a>
                   </div>
                 </div>

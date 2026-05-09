@@ -25,3 +25,31 @@ export const postcardThemes = [
   },
 ];
 
+const themeTranslations = {
+  'golden-hour': {
+    name: '金色时刻记忆',
+    mood: '温暖明亮',
+    caption: '适合记录阳光、友好而轻松庆祝感的参观体验。',
+  },
+  'market-breeze': {
+    name: '市井微风',
+    mood: '热闹而有社交感',
+    caption: '适合记住流动、交谈、穿行和快速发现的游客。',
+  },
+  'quiet-canal': {
+    name: '安静运河回望',
+    mood: '柔和而沉静',
+    caption: '适合被水、阴影和细节塑造的慢速路线。',
+  },
+};
+
+export function localizePostcardTheme(theme, language = 'en') {
+  if (language !== 'zh') {
+    return theme;
+  }
+
+  return {
+    ...theme,
+    ...themeTranslations[theme.id],
+  };
+}
