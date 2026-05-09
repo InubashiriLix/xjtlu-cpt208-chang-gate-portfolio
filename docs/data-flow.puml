@@ -1,0 +1,52 @@
+@startuml
+title Chang Gate Heritage - Data Flow
+
+skinparam backgroundColor #fffdf8
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam ActivityBackgroundColor #fff8ea
+skinparam ActivityBorderColor #b7a98e
+skinparam ArrowColor #2f8a7d
+skinparam DiamondBackgroundColor #eef7f5
+skinparam DiamondBorderColor #2f8a7d
+
+start
+:User opens the web app;
+:HashRouter selects current page;
+
+fork
+  :Read localStorage;
+  :Restore selected route\nand language;
+fork again
+  :Load bundled static data;
+  :spots.js, galleryViews.js,\npostcardThemes.js;
+fork again
+  :Load bundled visual assets;
+  :raw images, spot images,\ncanal badge SVG;
+end fork
+
+:AppStateContext builds derived state;
+:Localize spots/routes for\nEnglish or Chinese;
+:Compute live-looking distances\nfrom demo/current location;
+
+if (Selected page?) then (Home / Gallery / Spot)
+  :Render localized content\nand route cards;
+elseif (Map)
+  :Load AMap JS SDK;
+  :Draw markers and walking route;
+  :Show localized info windows\nand next-stop guidance;
+elseif (Postcard)
+  :Select theme, photo,\nfavorite spot, message;
+  :Render preview in React;
+  :Export PNG through\nbrowser Canvas API;
+else (Ask)
+  :Build progress JSON\nwith selected language;
+  :Send messages to /api/deepseek;
+  :Vite proxy forwards request\nto DeepSeek Chat API;
+  :Render assistant response\nin selected language;
+endif
+
+:User sees updated UI;
+stop
+
+@enduml

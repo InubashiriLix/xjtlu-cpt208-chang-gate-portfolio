@@ -1,0 +1,69 @@
+@startuml
+title Chang Gate Heritage - Web App System Architecture
+
+skinparam backgroundColor #fffdf8
+skinparam componentStyle rectangle
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam ArrowColor #2f8a7d
+skinparam ComponentBorderColor #b7a98e
+skinparam ComponentBackgroundColor #fff8ea
+skinparam DatabaseBackgroundColor #eef7f5
+skinparam DatabaseBorderColor #2f8a7d
+skinparam CloudBackgroundColor #f8efe1
+skinparam CloudBorderColor #c9872d
+
+actor "Visitor / User" as User
+
+node "Browser" {
+  component "React App\n(HashRouter)" as ReactApp
+  component "AppLayout\nHeader + Bottom Nav" as Layout
+  component "Pages\nHome / Map / Gallery /\nSpot Detail / Postcard / Ask" as Pages
+  component "Reusable UI Components\nSpotCard, RouteTimeline,\nPostcardPreview, SectionTitle" as UI
+  component "AppStateContext\nlanguage, route, location,\nchat messages" as State
+  database "localStorage\nlanguage + route progress" as LocalStorage
+  component "Static Data Modules\nspots, routes, gallery,\npostcard themes" as Data
+  folder "Bundled Assets\nraw_img + spot images + SVG" as Assets
+}
+
+node "Vite Dev / Preview Server" as Vite {
+  component "/api/deepseek\nproxy middleware" as Proxy
+}
+
+cloud "External Services" {
+  component "AMap JS API\ninteractive map rendering" as AMap
+  component "DeepSeek Chat API\nroute-aware answers" as DeepSeek
+}
+
+User --> ReactApp : opens hosted URL\nand interacts
+ReactApp --> Layout : renders shell
+Layout --> Pages : renders selected route
+Pages --> UI : composes interface
+Pages --> State : reads route, language,\nspots, chat state
+UI --> State : reads language-aware labels
+State --> Data : localizes spots/routes\nand computes distances
+State <--> LocalStorage : persist language\nand selected route
+Pages --> Assets : display photos,\nicons, gallery media
+
+Pages --> AMap : load map SDK\nwith VITE_AMAP_KEY
+Pages --> Proxy : POST chat messages\nand route JSON
+Proxy --> DeepSeek : forwards request\nwith API key server-side
+DeepSeek --> Proxy : answer JSON
+Proxy --> Pages : assistant response
+
+note right of State
+  Core client data handling:
+  - static heritage content is bundled
+  - selected language is global state
+  - spot distances are computed in browser
+  - Ask prompt receives current language
+    and route progress
+end note
+
+note bottom of Proxy
+  Used in Vite dev/preview.
+  On static hosting, this endpoint needs
+  a serverless/API deployment equivalent.
+end note
+
+@enduml
