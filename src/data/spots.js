@@ -30,6 +30,7 @@ export const heritageSpots = [
       accent: 'amber',
     },
     coords: { x: 24, y: 46 },
+    location: { lng: 120.5988, lat: 31.3176 },
   },
   {
     id: 'market-lane-crossing',
@@ -62,6 +63,7 @@ export const heritageSpots = [
       accent: 'orange',
     },
     coords: { x: 48, y: 34 },
+    location: { lng: 120.6036, lat: 31.3196 },
   },
   {
     id: 'canal-lookout-deck',
@@ -94,6 +96,7 @@ export const heritageSpots = [
       accent: 'teal',
     },
     coords: { x: 68, y: 54 },
+    location: { lng: 120.6076, lat: 31.3164 },
   },
   {
     id: 'willow-bridge-view',
@@ -126,6 +129,7 @@ export const heritageSpots = [
       accent: 'green',
     },
     coords: { x: 76, y: 30 },
+    location: { lng: 120.6092, lat: 31.3202 },
   },
   {
     id: 'waterside-alley-walk',
@@ -158,6 +162,7 @@ export const heritageSpots = [
       accent: 'teal',
     },
     coords: { x: 39, y: 66 },
+    location: { lng: 120.6018, lat: 31.3144 },
   },
   {
     id: 'wharf-steps-corner',
@@ -190,6 +195,7 @@ export const heritageSpots = [
       accent: 'amber',
     },
     coords: { x: 84, y: 72 },
+    location: { lng: 120.6108, lat: 31.3135 },
   },
 ];
 
