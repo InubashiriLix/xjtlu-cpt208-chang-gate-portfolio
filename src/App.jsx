@@ -4,6 +4,7 @@ import AboutPage from './pages/AboutPage';
 import ExplorePage from './pages/ExplorePage';
 import GalleryPage from './pages/GalleryPage';
 import HomePage from './pages/HomePage';
+import MapPage from './pages/MapPage';
 import PostcardPage from './pages/PostcardPage';
 import SpotDetailPage from './pages/SpotDetailPage';
 import StampsPage from './pages/StampsPage';
@@ -13,6 +14,7 @@ export default function App() {
     <AppLayout>
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/map" element={<MapPage />} />
         <Route path="/explore" element={<ExplorePage />} />
         <Route path="/gallery" element={<GalleryPage />} />
         <Route path="/spots/:slug" element={<SpotDetailPage />} />

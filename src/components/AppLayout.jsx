@@ -3,6 +3,14 @@ import BottomNav from './BottomNav';
 import HeaderBar from './HeaderBar';
 
 function getHeaderMeta(pathname) {
+  if (pathname.startsWith('/map')) {
+    return {
+      title: 'Interactive Map',
+      eyebrow: 'Satellite view',
+      description: 'Explore heritage spots around Chang Gate on the map.',
+    };
+  }
+
   if (pathname.startsWith('/explore')) {
     return {
       title: 'Explore the Walk',
