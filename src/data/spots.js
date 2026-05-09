@@ -224,12 +224,12 @@ export const featureCards = [
   },
   {
     title: 'Memory Stamps',
-    detail: 'Every stop has a collectible mark so progress feels visible, rewarding, and demo-ready.',
+    detail: 'Every stop has a collectible mark so progress feels visible and rewarding.',
     accent: 'amber',
   },
   {
     title: 'Souvenir Postcard',
-    detail: 'A simulated AI postcard turns mood, route, and favorite place into a keepsake at the end of the walk.',
+    detail: 'A postcard that turns mood, route, and favorite place into a keepsake at the end of the walk.',
     accent: 'green',
   },
 ];
@@ -248,7 +248,7 @@ export const rewardMilestones = [
   {
     count: 5,
     title: 'Canal Storykeeper',
-    reward: 'The full route feels complete enough for a showcase demo.',
+    reward: 'The full route feels complete as a personal heritage journey.',
   },
 ];
 

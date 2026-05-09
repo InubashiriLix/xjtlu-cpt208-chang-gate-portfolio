@@ -1,7 +1,7 @@
 export const aboutCards = [
   {
     title: 'For Visitors & Residents',
-    body: 'The prototype supports quick first-time discovery while still feeling useful to people who know the area and want a fresh way to notice it.',
+    body: 'The application is used for first-time discovery while still feeling useful to people who know the area and want a fresh way to notice it.',
   },
   {
     title: 'Mobile-First and Onsite',
@@ -20,7 +20,7 @@ export const futureModules = [
   },
   {
     title: 'Live Nearby Trigger',
-    body: 'Location services can later replace the simulated distance labels and nearby prompts used in this prototype.',
+    body: 'Location services can later replace the simulated distance labels and nearby prompts.',
   },
   {
     title: 'Generative Memory Writer',

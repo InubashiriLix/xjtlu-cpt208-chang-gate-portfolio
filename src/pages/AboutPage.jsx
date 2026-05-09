@@ -8,7 +8,7 @@ export default function AboutPage() {
         <p className="eyebrow">Project overview</p>
         <h2>Playful heritage exploration for Chang Gate</h2>
         <p>
-          This prototype imagines a mobile companion for visitors and residents who
+          This experience is a mobile companion for visitors and residents who
           want a warmer, more personal way to explore the Suzhou Grand Canal area at
           Chang Gate. The design prioritises short outdoor-friendly content,
           collectible progress, and memorable end-of-journey output.
@@ -19,7 +19,7 @@ export default function AboutPage() {
         <SectionTitle
           eyebrow="Design goals"
           title="Human-centric qualities built into the frontend"
-          description="The experience is intentionally low-friction, bright, and easy to demo in a poster, video, or live coursework presentation."
+          description="The experience is intentionally low-friction, bright, and inviting."
         />
         <div className="feature-grid">
           {aboutCards.map((card) => (
@@ -33,9 +33,9 @@ export default function AboutPage() {
 
       <section className="section-block">
         <SectionTitle
-          eyebrow="Prototype note"
-          title="What is simulated in this version"
-          description="The current build is static and frontend-only, but it is structured so future modules can plug in without a redesign."
+          eyebrow="Development roadmap"
+          title="What is planned for future versions"
+          description="The current build is structured so future modules can plug in without a redesign."
         />
         <div className="milestone-grid">
           {futureModules.map((module) => (

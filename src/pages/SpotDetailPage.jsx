@@ -13,7 +13,7 @@ export default function SpotDetailPage() {
     return (
       <section className="card empty-card">
         <p className="eyebrow">Spot not found</p>
-        <h2>This story stop is missing from the prototype data.</h2>
+        <h2>This story stop is missing.</h2>
         <Link className="button button-primary" to="/explore">
           Return to explore
         </Link>
@@ -61,19 +61,18 @@ export default function SpotDetailPage() {
             description={spot.mission}
           />
           <div className="mission-foot">
-            <span className="prototype-pill">Outdoor friendly</span>
-            <span className="prototype-pill">1 minute task</span>
+            <span className="status-pill">Outdoor friendly</span>
+            <span className="status-pill">1 minute task</span>
           </div>
         </article>
       </section>
 
-      <section className="card xr-placeholder">
-        <p className="eyebrow">Future XR module</p>
-        <h2>Historic overlay preview</h2>
+      <section className="card historic-overlay-card">
+        <p className="eyebrow">Historic overlay</p>
+        <h2>Compare past and present at this viewpoint</h2>
         <p>
-          A future layer could place a visual comparison over this viewpoint,
-          helping visitors compare present-day textures with an interpretive
-          heritage overlay.
+          A visual comparison layer lets visitors match present-day textures with an
+          interpretive heritage overlay from the same stopping point.
         </p>
       </section>
 

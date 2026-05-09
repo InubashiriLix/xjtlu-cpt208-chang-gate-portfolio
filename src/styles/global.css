@@ -234,7 +234,6 @@ a:focus-visible {
   color: var(--orange);
 }
 
-.prototype-pill,
 .status-pill,
 .tag-chip {
   display: inline-flex;

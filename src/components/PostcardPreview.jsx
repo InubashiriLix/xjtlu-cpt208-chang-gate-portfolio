@@ -19,7 +19,7 @@ export default function PostcardPreview({ theme, favoriteSpot, collectedSpots })
         <h3>{favoriteSpot.name} became the anchor of this walk.</h3>
         <p>
           Built from {collectedSpots.length} visited stops and a {theme.mood.toLowerCase()}
-          mood selection, this postcard imagines a future AI-generated keepsake with a
+          mood selection, this postcard is a unique keepsake with a
           warm editorial look.
         </p>
         <p className="postcard-signoff">

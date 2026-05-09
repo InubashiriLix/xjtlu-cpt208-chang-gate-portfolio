@@ -20,7 +20,7 @@ export default function SpotDetailCard({ spot, collected, onCollect }) {
         >
           {collected ? 'Stamp already collected' : 'Collect memory stamp'}
         </button>
-        <span className="prototype-pill">Stamp: {spot.stamp.name}</span>
+        <span className="status-pill">Stamp: {spot.stamp.name}</span>
       </div>
     </section>
   );

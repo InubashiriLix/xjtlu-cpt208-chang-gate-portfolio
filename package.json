@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@anthropic-ai/claude-code": "^2.1.138",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.28.0"
@@ -18,4 +19,3 @@
     "vite": "^5.4.10"
   }
 }
-

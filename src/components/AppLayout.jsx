@@ -46,7 +46,7 @@ function getHeaderMeta(pathname) {
 
   if (pathname.startsWith('/about')) {
     return {
-      title: 'About the Prototype',
+      title: 'About this application',
       eyebrow: 'Project info',
       description: 'Why the experience exists and what comes next.',
     };

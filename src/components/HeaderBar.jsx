@@ -18,9 +18,7 @@ export default function HeaderBar({ title, eyebrow, description, backTo }) {
             <Link className="button button-secondary button-small" to={backTo}>
               Back to walk
             </Link>
-          ) : (
-            <span className="prototype-pill">Static prototype</span>
-          )}
+          ) : null}
         </div>
       </div>
     </header>

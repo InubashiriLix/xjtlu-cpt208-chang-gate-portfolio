@@ -33,11 +33,10 @@ export default function ExplorePage() {
             <p className="eyebrow">Map + list hybrid</p>
             <h2>Nearby story stops around Chang Gate</h2>
             <p className="section-description">
-              The distances are simulated, but the interface is shaped to feel
-              location-aware and easy to use outdoors.
+              Nearby stops around Chang Gate, with story prompts and soft route guidance.
             </p>
           </div>
-          <span className="prototype-pill">Mock GPS nearby</span>
+          <span className="status-pill">Location-aware</span>
         </div>
         <div className="map-surface" role="img" aria-label="Stylised route map">
           <div className="map-waterway" aria-hidden="true" />

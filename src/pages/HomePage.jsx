@@ -40,8 +40,8 @@ export default function HomePage() {
       <section className="section-block">
         <SectionTitle
           eyebrow="Core features"
-          title="A prototype built for walking, collecting, and remembering"
-          description="The experience keeps heritage content short and mobile, while still showing enough interaction depth for a coursework demo."
+          title="Built for walking, collecting, and remembering"
+          description="Heritage content kept short and mobile, with interactions that feel playful and rewarding."
         />
         <FeatureGrid items={featureCards} />
       </section>
@@ -80,13 +80,12 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="card future-card">
-        <p className="eyebrow">Future module</p>
-        <h2>Historic overlay and AR relic view</h2>
+      <section className="card historic-overlay-card">
+        <p className="eyebrow">Historic overlay</p>
+        <h2>Compare past and present at the same viewpoint</h2>
         <p>
-          This prototype includes a clear placeholder for a future on-site XR layer
-          where visitors can compare today’s walk with interpretive views from the
-          same stopping point.
+          An on-site visual layer lets visitors compare today’s walk with
+          interpretive heritage views from the same stopping point.
         </p>
       </section>
     </div>

@@ -12,7 +12,7 @@ export default function GalleryPage() {
           <p className="eyebrow">Field gallery</p>
           <h2>Real views that shape the Chang Gate walk</h2>
           <p>
-            These photos ground the prototype in actual site atmosphere: gate,
+            These photos ground the experience in actual site atmosphere: gate,
             wall, canal, trees, and the everyday movement around them.
           </p>
         </div>

@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { heritageSpots, walkingRoutes } from '../data/spots';
 
 const AppStateContext = createContext(null);
-const STORAGE_KEY = 'chang-gate-prototype-progress';
+const STORAGE_KEY = 'chang-gate-canal-quest-progress';
 
 const defaultProgress = {
   collectedSpotIds: ['chang-gate-arrival', 'market-lane-crossing'],

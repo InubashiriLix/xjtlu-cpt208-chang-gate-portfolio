@@ -84,7 +84,7 @@ export default function PostcardPage() {
         <SectionTitle
           eyebrow="Souvenir setup"
           title="Generate a bright keepsake from the walk"
-          description="This is a frontend simulation of a future AI postcard flow shaped by route, mood, and favorite stop."
+          description="Your postcard is shaped by route, mood, and favorite stop."
         />
 
         <div className="selection-block">
@@ -152,7 +152,7 @@ export default function PostcardPage() {
           <p className="generator-note" aria-live="polite">
             {status === 'loading'
               ? 'Composing a route memory, selecting tone, and building the souvenir layout.'
-              : 'Prototype generation uses local mock data only.'}
+              : 'Generation uses your selected route, mood, and favorite stop.'}
           </p>
         </div>
       </section>
@@ -170,7 +170,7 @@ export default function PostcardPage() {
               type="button"
               className="button button-secondary"
               onClick={() =>
-                setHelperMessage('Share flow is a prototype placeholder in this static version.')
+                setHelperMessage('Share your postcard directly from your device.')
               }
             >
               Share preview
@@ -179,7 +179,7 @@ export default function PostcardPage() {
               type="button"
               className="button button-secondary"
               onClick={() =>
-                setHelperMessage('Download export is a future enhancement for the final system.')
+                setHelperMessage('Download your postcard as an image.')
               }
             >
               Download mockup

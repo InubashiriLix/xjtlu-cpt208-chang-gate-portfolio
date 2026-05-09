@@ -25,7 +25,7 @@ export default function StampsPage() {
         <SectionTitle
           eyebrow="Reward milestones"
           title="Visible progress makes the journey feel playful"
-          description="The UI uses simple unlock logic so a demo audience can quickly understand the reward loop."
+          description="Each stamp you collect unlocks new rewards along the journey."
         />
         <div className="milestone-grid">
           {rewardMilestones.map((milestone) => {
