@@ -19,4 +19,4 @@
    4. Chang gate
    5. market lane
    - line segments are connected in this order on both map views.
-5. <!-- 6. [] add deepseek page (not now) -->
+5. [x] add deepseek page

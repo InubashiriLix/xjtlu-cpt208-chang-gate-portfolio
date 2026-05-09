@@ -52,6 +52,14 @@ function getHeaderMeta(pathname) {
     };
   }
 
+  if (pathname.startsWith('/deepseek')) {
+    return {
+      title: 'DeepSeek Guide',
+      eyebrow: 'AI route helper',
+      description: 'Ask for advice based on current route progress.',
+    };
+  }
+
   if (pathname.startsWith('/about')) {
     return {
       title: 'About this application',

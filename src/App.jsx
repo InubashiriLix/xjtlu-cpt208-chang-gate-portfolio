@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import AppLayout from './components/AppLayout';
 import AboutPage from './pages/AboutPage';
+import DeepSeekPage from './pages/DeepSeekPage';
 import ExplorePage from './pages/ExplorePage';
 import GalleryPage from './pages/GalleryPage';
 import HomePage from './pages/HomePage';
@@ -20,6 +21,7 @@ export default function App() {
         <Route path="/spots/:slug" element={<SpotDetailPage />} />
         <Route path="/stamps" element={<StampsPage />} />
         <Route path="/postcard" element={<PostcardPage />} />
+        <Route path="/deepseek" element={<DeepSeekPage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

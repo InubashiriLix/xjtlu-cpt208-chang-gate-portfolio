@@ -7,6 +7,7 @@ const navItems = [
   { to: '/gallery', label: 'Gallery' },
   { to: '/stamps', label: 'Stamps' },
   { to: '/postcard', label: 'Postcard' },
+  { to: '/deepseek', label: 'AI' },
   { to: '/about', label: 'About' },
 ];
 
