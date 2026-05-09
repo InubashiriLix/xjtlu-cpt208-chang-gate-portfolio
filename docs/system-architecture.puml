@@ -1,5 +1,5 @@
 @startuml
-title Chang Gate Heritage - Web App System Architecture
+title Chang Gate Heritage - System Architecture
 
 skinparam backgroundColor #fffdf8
 skinparam componentStyle rectangle
@@ -13,57 +13,64 @@ skinparam DatabaseBorderColor #2f8a7d
 skinparam CloudBackgroundColor #f8efe1
 skinparam CloudBorderColor #c9872d
 
-actor "Visitor / User" as User
+actor "Visitor" as User
 
 node "Browser" {
-  component "React App\n(HashRouter)" as ReactApp
+  component "React App\nHashRouter" as ReactApp
   component "AppLayout\nHeader + Bottom Nav" as Layout
   component "Pages\nHome / Map / Gallery /\nSpot Detail / Postcard / Ask" as Pages
-  component "Reusable UI Components\nSpotCard, RouteTimeline,\nPostcardPreview, SectionTitle" as UI
-  component "AppStateContext\nlanguage, route, location,\nchat messages" as State
-  database "localStorage\nlanguage + route progress" as LocalStorage
+  component "Reusable Components\nSpotCard, SpotDetailCard,\nRouteTimeline, PostcardPreview,\nSectionTitle" as Components
+  component "AppStateContext\nroute, language, location,\nchat messages" as State
+  database "localStorage\nselected route + language" as LocalStorage
   component "Static Data Modules\nspots, routes, gallery,\npostcard themes" as Data
-  folder "Bundled Assets\nraw_img + spot images + SVG" as Assets
+  folder "Bundled Assets\nspot photos, raw_img,\ncanal badge, poster PDF" as Assets
 }
 
 node "Vite Dev / Preview Server" as Vite {
-  component "/api/deepseek\nproxy middleware" as Proxy
+  component "deepSeekProxyPlugin\n/api/deepseek" as Proxy
+  database ".env\nVITE_AMAP_KEY\nVITE_AMAP_SECURITY_KEY\nAPI_KEY" as Env
 }
 
 cloud "External Services" {
-  component "AMap JS API\ninteractive map rendering" as AMap
-  component "DeepSeek Chat API\nroute-aware answers" as DeepSeek
+  component "AMap JS API\nMap SDK + markers + polylines" as AMap
+  component "DeepSeek Chat API\nroute-aware Ask response" as DeepSeek
 }
 
-User --> ReactApp : opens hosted URL\nand interacts
-ReactApp --> Layout : renders shell
-Layout --> Pages : renders selected route
-Pages --> UI : composes interface
-Pages --> State : reads route, language,\nspots, chat state
-UI --> State : reads language-aware labels
-State --> Data : localizes spots/routes\nand computes distances
+cloud "GitHub Pages" as PagesHost {
+  component "Static dist output\nHTML / CSS / JS / assets" as StaticHost
+}
+
+User --> ReactApp : opens app URL
+ReactApp --> Layout : renders app shell
+Layout --> Pages : renders current route
+Pages --> Components : composes UI
+Pages --> State : reads localized state
+Components --> State : reads language-aware labels
+State --> Data : localizes route and spot data
 State <--> LocalStorage : persist language\nand selected route
-Pages --> Assets : display photos,\nicons, gallery media
+Pages --> Assets : display photos\nand media
 
-Pages --> AMap : load map SDK\nwith VITE_AMAP_KEY
-Pages --> Proxy : POST chat messages\nand route JSON
-Proxy --> DeepSeek : forwards request\nwith API key server-side
-DeepSeek --> Proxy : answer JSON
-Proxy --> Pages : assistant response
+Pages --> AMap : load SDK using\nVITE_AMAP_KEY
+Pages --> Proxy : POST Ask messages\nand progress JSON
+Proxy --> Env : read API_KEY
+Proxy --> DeepSeek : forward chat completion\nrequest
+DeepSeek --> Proxy : response JSON
+Proxy --> Pages : assistant message
 
-note right of State
-  Core client data handling:
-  - static heritage content is bundled
-  - selected language is global state
-  - spot distances are computed in browser
-  - Ask prompt receives current language
-    and route progress
+ReactApp --> StaticHost : built by GitHub Actions\nand hosted as static files
+
+note right of StaticHost
+  GitHub Pages hosts the high-fi prototype.
+  It does not run the Vite /api/deepseek
+  middleware by itself.
 end note
 
-note bottom of Proxy
-  Used in Vite dev/preview.
-  On static hosting, this endpoint needs
-  a serverless/API deployment equivalent.
+note right of State
+  Core data handling:
+  - content is bundled local data
+  - language switches English / Chinese
+  - distances are computed client-side
+  - Ask receives route progress JSON
 end note
 
 @enduml

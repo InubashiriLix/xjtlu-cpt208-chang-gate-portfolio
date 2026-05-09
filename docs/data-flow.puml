@@ -11,42 +11,49 @@ skinparam DiamondBackgroundColor #eef7f5
 skinparam DiamondBorderColor #2f8a7d
 
 start
-:User opens the web app;
-:HashRouter selects current page;
+:Visitor opens the app;
+:HashRouter selects page route;
 
 fork
+  :Load bundled React JavaScript;
+  :Render AppLayout;
+fork again
   :Read localStorage;
-  :Restore selected route\nand language;
+  :Restore language and selected route;
 fork again
-  :Load bundled static data;
-  :spots.js, galleryViews.js,\npostcardThemes.js;
-fork again
-  :Load bundled visual assets;
-  :raw images, spot images,\ncanal badge SVG;
+  :Load static data modules;
+  :spots, routes, gallery views,\npostcard themes;
 end fork
 
-:AppStateContext builds derived state;
-:Localize spots/routes for\nEnglish or Chinese;
-:Compute live-looking distances\nfrom demo/current location;
+:AppStateContext derives shared state;
+:Localize spots and routes\nfor English or Chinese;
+:Calculate demo/current distance\nwith haversine formula;
 
-if (Selected page?) then (Home / Gallery / Spot)
-  :Render localized content\nand route cards;
+if (Current page?) then (Home)
+  :Render hero, nearby spots,\nfeature goals, route preview,\npostcard teaser;
 elseif (Map)
+  :Read VITE_AMAP_KEY and\nVITE_AMAP_SECURITY_KEY;
   :Load AMap JS SDK;
-  :Draw markers and walking route;
-  :Show localized info windows\nand next-stop guidance;
+  :Draw markers and route polylines;
+  :Show next-stop info window\nand ordered stop list;
+elseif (Spot Detail)
+  :Find spot by URL slug;
+  :Render image hero, story,\nnoticing prompts, next route stop;
+elseif (Gallery)
+  :Render local field photos\nand bilingual descriptions;
 elseif (Postcard)
-  :Select theme, photo,\nfavorite spot, message;
-  :Render preview in React;
-  :Export PNG through\nbrowser Canvas API;
+  :Choose theme, image crop,\nfavorite spot, message;
+  :Render preview;
+  :Export PNG with Canvas API;
 else (Ask)
-  :Build progress JSON\nwith selected language;
-  :Send messages to /api/deepseek;
-  :Vite proxy forwards request\nto DeepSeek Chat API;
-  :Render assistant response\nin selected language;
+  :Build progress JSON from\ncurrent route and localized spots;
+  :Send POST /api/deepseek;
+  :Vite proxy reads API_KEY\nfrom .env;
+  :DeepSeek returns assistant answer\nin selected language;
 endif
 
-:User sees updated UI;
+:Update UI state;
+:Persist language/route changes\nto localStorage;
 stop
 
 @enduml
