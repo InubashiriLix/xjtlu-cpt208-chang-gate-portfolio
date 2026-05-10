@@ -11,22 +11,15 @@ The prototype is designed as a polished frontend-only web app that supports play
 
 ## Highlights
 
-- Mobile-first multi-route app built with React and Vite
-- Bright warm visual system tailored to Chang Gate heritage exploration
-- Story Hunt flow with nearby spots, short story snippets, and playful missions
-- Stamp collection booklet with visible progress and unlock milestones
-- Simulated Ask postcard generator with loading and preview states
-- Static-hosting-safe routing via `HashRouter`
-- GitHub Pages deployment workflow included
-
-## Routes
-
-- `/` Home
-- `/explore` Explore / map
-- `/spots/:slug` Heritage spot detail
-- `/stamps` Stamp collection
-- `/postcard` Postcard generator
-- `/about` Project info
+- **Curated Heritage Route** — Walk through 5 real Suzhou canal-side spots (Shantang Street, Wharf Steps Corner, Waterside Alley Walk, Chang Gate, Market Lane Crossing), each with a story snippet, observation prompts, and a playful mission.
+- **Interactive AMap Integration** — Browse heritage spots on an interactive Gaode (AMap) map with markers, route polylines, info windows, and one-click navigation to spot detail pages.
+- **Quick Quiz at Each Stop** — Test your knowledge with a built-in multiple-choice quiz per spot, with instant feedback and retry support.
+- **Custom Postcard Souvenir** — A canvas-based postcard generator that composites your uploaded photo (with zoom/crop/brightness/contrast/saturation controls), a mood theme palette, a favorite spot memory line, and a custom message into a downloadable PNG keepsake.
+- **Route-Aware Ask Assistant** — Chat with DeepSeek via a built-in interface that sends your route progress, selected spots, and current location as context, so answers are grounded in the actual walk.
+- **Field Gallery** — A curated photo collection of Chang Gate and its surroundings, annotated with observational lenses to connect each image to the route experience.
+- **Bilingual (EN/ZH)** — Full Chinese/English toggle persisted across sessions, covering UI labels, spot content, quizzes, gallery notes, and postcard themes.
+- **Mobile-First Design** — Touch-optimized bottom navigation, large tap targets, and content chunked for outdoor reading with a custom CSS design system.
+- **Local-First Progress** — All user state (language, route selection) persisted to localStorage, no accounts or backend required.
 
 ## Tech Stack
 
@@ -68,10 +61,3 @@ The app uses `HashRouter` and `base: './'` in Vite so it works safely on GitHub 
 2. Ensure the default branch is `main`.
 3. In GitHub repository settings, enable GitHub Pages with GitHub Actions as the source.
 4. Push to `main` and the included workflow at `.github/workflows/deploy.yml` will build and publish the `dist/` output.
-
-## Prototype Notes
-
-- All content is mock local data for frontend prototyping.
-- Stamp progress is persisted in `localStorage`.
-- Nearby distance, GPS feel, XR preview, and Ask postcard generation are simulated in the UI only.
-- The structure is intentionally ready for future location, XR, or Ask integrations.
