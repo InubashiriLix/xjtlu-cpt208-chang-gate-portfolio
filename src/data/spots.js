@@ -31,6 +31,18 @@ export const heritageSpots = [
       'Notice where people stop to browse, photograph, or orient themselves.',
       'Compare the street energy here with the quieter waterside stops nearby.',
     ],
+    quiz: {
+      en: {
+        question: 'What type of street experience does Shantang Street primarily offer?',
+        options: ['A heritage museum with guided tours', 'A quiet residential lane', 'A canal-side street with shops and daily life'],
+        answerIndex: 2,
+      },
+      zh: {
+        question: '山塘街主要提供什么样的街巷体验？',
+        options: ['有导游讲解的遗产博物馆', '安静的居民小巷', '有店铺和日常生活的运河街边'],
+        answerIndex: 2,
+      },
+    },
     mission:
       'Choose one street detail that feels strongly local and turn it into a one-line postcard caption.',
     tags: ['Views', 'Stories', 'Family-friendly'],
@@ -60,6 +72,18 @@ export const heritageSpots = [
       'Notice where people choose to stop rather than keep moving onward.',
       'Think about which earlier stop this place connects back to emotionally.',
     ],
+    quiz: {
+      en: {
+        question: 'What is the main purpose of the Wharf Steps Corner on the route?',
+        options: ['A busy shopping area', 'A quiet pause between busier spots', 'A historical city gate'],
+        answerIndex: 1,
+      },
+      zh: {
+        question: '码头台阶角在路线中的主要作用是什么？',
+        options: ['繁忙的购物区', '热闹地点之间的安静停顿', '历史城门'],
+        answerIndex: 1,
+      },
+    },
     mission:
       'Pause at the steps and choose one texture that could become a postcard detail later.',
     tags: ['Views', 'Stories'],
@@ -89,6 +113,18 @@ export const heritageSpots = [
       'Notice how light changes from bright canal edge to shaded alley depth.',
       'See whether sound becomes more enclosed here than at the open water.',
     ],
+    quiz: {
+      en: {
+        question: 'What does the Waterside Alley Walk encourage visitors to do?',
+        options: ['Take photos of city landmarks', 'Notice textures, light, and atmosphere', 'Visit a local museum'],
+        answerIndex: 1,
+      },
+      zh: {
+        question: '水边小巷步道鼓励游客做什么？',
+        options: ['拍摄城市地标照片', '观察质感、光线和氛围', '参观当地博物馆'],
+        answerIndex: 1,
+      },
+    },
     mission:
       'Choose three words that describe the atmosphere here, then compare them with Shantang Street.',
     tags: ['Stories', 'Family-friendly'],
@@ -118,6 +154,18 @@ export const heritageSpots = [
       'Compare the pace of passing bikes and walkers with the slower canal atmosphere nearby.',
       'Notice how the entry feels like both a meeting point and a wayfinding landmark.',
     ],
+    quiz: {
+      en: {
+        question: 'What makes Chang Gate feel "lived-in" according to the story?',
+        options: ['Its ancient stone architecture', 'The daily movement of people through it', 'The nearby shops and restaurants'],
+        answerIndex: 1,
+      },
+      zh: {
+        question: '根据介绍，什么让阊门有"生活感"？',
+        options: ['古老的石制建筑', '人们日常穿行其中', '附近的商店和餐馆'],
+        answerIndex: 1,
+      },
+    },
     mission:
       'Capture a past-meets-present moment by photographing the gate with today’s street life in the frame.',
     tags: ['Nearby', 'Stories', 'Views'],
@@ -147,6 +195,18 @@ export const heritageSpots = [
       'Notice where the heritage landmark gives way to practical daily commerce.',
       'Compare the commercial street energy with the quieter canal-side stops.',
     ],
+    quiz: {
+      en: {
+        question: 'How does Market Lane Crossing connect heritage with daily life?',
+        options: ['Through museum exhibits', 'Through shop signs, customers, and daily errands', 'Through guided walking tours'],
+        answerIndex: 1,
+      },
+      zh: {
+        question: '市巷路口如何将遗产与日常生活连接？',
+        options: ['通过博物馆展览', '通过店铺招牌、顾客和日常事务', '通过导游步行讲解'],
+        answerIndex: 1,
+      },
+    },
     mission:
       'Find one shopfront detail that shows how the old gate area still works as a living commercial place.',
     tags: ['Nearby', 'Stories', 'Family-friendly'],

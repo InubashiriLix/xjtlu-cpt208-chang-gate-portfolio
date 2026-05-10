@@ -2,6 +2,7 @@ import { Link, useParams } from 'react-router-dom';
 import SectionTitle from '../components/SectionTitle';
 import SpotCard from '../components/SpotCard';
 import SpotDetailCard from '../components/SpotDetailCard';
+import SpotQuizCard from '../components/SpotQuizCard';
 import { useAppState } from '../context/AppStateContext';
 import { getNextSpotOnRoute } from '../data/spots';
 
@@ -38,27 +39,7 @@ export default function SpotDetailPage() {
         />
       </section>
 
-      <section className="card detail-section">
-        <SectionTitle
-          eyebrow={isChinese ? '观察提示' : 'What to notice'}
-          title={isChinese ? '用简短提示观察这个地点' : 'Observe the place in short, simple prompts'}
-        />
-        <ul className="detail-list">
-          {spot.notice.map((item) => (
-            <li key={item}>{item}</li>
-          ))}
-        </ul>
-      </section>
-
-      <section className="card historic-overlay-card">
-        <p className="eyebrow">{isChinese ? '历史叠加' : 'Historic overlay'}</p>
-        <h2>{isChinese ? '在同一视角比较过去与现在' : 'Compare past and present at this viewpoint'}</h2>
-        <p>
-          {isChinese
-            ? '视觉比较层可以帮助游客把当下的空间质感与同一停留点的遗产解读画面对照。'
-            : 'A visual comparison layer lets visitors match present-day textures with an interpretive heritage overlay from the same stopping point.'}
-        </p>
-      </section>
+      <SpotQuizCard spot={spot} isChinese={isChinese} />
 
       <section className="section-block">
         <SectionTitle
