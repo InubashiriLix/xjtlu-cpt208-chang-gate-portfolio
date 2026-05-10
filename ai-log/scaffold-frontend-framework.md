@@ -10,7 +10,7 @@
 
 **用户**: 我需要从零搭一个前端应用，技术栈用 React + Vite，能跑 GitHub Pages。能帮我搭好基础框架吗？
 
-**AI**: 先明确你的需求结构。从你的描述来看需要这几层：
+**ChatGPT 5.5**: 先明确你的需求结构。从你的描述来看需要这几层：
 
 1. **路由层** — 多页面导航（首页、地图、详情、明信片、Chat）
 2. **布局层** — 统一的底部导航栏和页面容器
@@ -24,7 +24,7 @@ npm create vite@latest . -- --template react
 npm install react-router-dom
 ```
 
-**AI**: 项目初始化后，建立目录结构如下：
+**ChatGPT 5.5**: 项目初始化后，建立目录结构如下：
 
 ```
 src/
@@ -37,7 +37,7 @@ src/
   utils/          # 工具函数
 ```
 
-**AI**: 路由配置用 `HashRouter` + `base: './'`，这样 GitHub Pages 不需要服务端路由重写。
+**ChatGPT 5.5**: 路由配置用 `HashRouter` + `base: './'`，这样 GitHub Pages 不需要服务端路由重写。
 
 ```jsx
 // src/main.jsx
@@ -73,7 +73,7 @@ export default function App() {
 
 **用户**: 布局组件应该长什么样？我希望有个底部导航栏。
 
-**AI**: 用 `<nav>` + `NavLink` 实现固定在底部的导航栏，整个页面包在一个 `AppLayout` 里统一管理 padding 和 spacing：
+**ChatGPT 5.5**: 用 `<nav>` + `NavLink` 实现固定在底部的导航栏，整个页面包在一个 `AppLayout` 里统一管理 padding 和 spacing：
 
 ```jsx
 // components/AppLayout.jsx
@@ -100,7 +100,7 @@ const navItems = [
 
 **用户**: 状态管理怎么设计？我需要存当前语言、用户位置、选中的路线。
 
-**AI**: 用 React Context + `useState` 就够了，不需要引入 Redux。核心思路：
+**ChatGPT 5.5**: 用 React Context + `useState` 就够了，不需要引入 Redux。核心思路：
 
 - `AppStateProvider` 包裹全局，提供 `spots`、`language`、`currentLocation`、`selectedRoute` 等
 - 语言和路线选择持久化到 `localStorage`
@@ -139,7 +139,7 @@ export function AppStateProvider({ children }) {
 
 **用户**: 数据层怎么组织地点内容？每个地点需要什么字段？
 
-**AI**: 每个地点应该包含展示、互动、导航三类信息：
+**ChatGPT 5.5**: 每个地点应该包含展示、互动、导航三类信息：
 
 ```js
 // data/spots.js
@@ -171,7 +171,7 @@ export const heritageSpots = [
 ];
 ```
 
-**AI**: 然后通过 `localizeSpot(spot, language)` 函数在英文和中文之间切换，用展开运算符合并翻译字段：
+**ChatGPT 5.5**: 然后通过 `localizeSpot(spot, language)` 函数在英文和中文之间切换，用展开运算符合并翻译字段：
 
 ```js
 export function localizeSpot(spot, language) {
@@ -182,7 +182,7 @@ export function localizeSpot(spot, language) {
 
 **用户**: CSS 方面有什么建议？我不想用 Tailwind 或组件库，希望能轻量。
 
-**AI**: 写一个全局 CSS 文件，用 CSS 变量定义设计系统。移动端优先，核心思路：
+**ChatGPT 5.5**: 写一个全局 CSS 文件，用 CSS 变量定义设计系统。移动端优先，核心思路：
 
 - `--teal`, `--amber`, `--orange` 等语义色
 - `.page-stack` 统一页面间距
@@ -218,7 +218,7 @@ export function localizeSpot(spot, language) {
 }
 ```
 
-**AI**: 最终给你的建议路径：
+**ChatGPT 5.5**: 最终给你的建议路径：
 
 1. `npm create vite` → 装 `react-router-dom` → 写 `main.jsx`（HashRouter）
 2. 建 `App.jsx` 路由表 + `AppLayout` + `BottomNav`
