@@ -88,7 +88,7 @@ function getHeaderMeta(pathname, isChinese) {
     eyebrow: 'Chang Gate / 阊门',
     description: '面向游客与居民的轻量文化遗产探索。',
   } : {
-    title: 'Chang Gate Heritage',
+    title: 'Discover Chang Gate',
     eyebrow: 'Chang Gate / 阊门',
     description: 'Playful heritage exploration for visitors and residents.',
   };

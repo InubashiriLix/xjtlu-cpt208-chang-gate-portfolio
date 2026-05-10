@@ -39,7 +39,7 @@ export default function SpotDetailPage() {
         />
       </section>
 
-      <SpotQuizCard spot={spot} isChinese={isChinese} />
+      <SpotQuizCard key={spot.id} spot={spot} isChinese={isChinese} />
 
       <section className="section-block">
         <SectionTitle

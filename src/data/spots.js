@@ -6,7 +6,7 @@ import marketImg from '../../raw_img/changmen_conmercial.jpg';
 
 export const changGateLocation = { lng: 120.605741078035, lat: 31.315099315692006 };
 export const demoUserLocation = { lng: 120.60350126096095, lat: 31.314318747226537 };
-export const appDisplayName = 'Chang Gate Heritage';
+export const appDisplayName = 'Discover Chang Gate';
 
 export const heritageSpots = [
   {
