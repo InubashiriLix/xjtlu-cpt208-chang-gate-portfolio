@@ -1,24 +1,9 @@
 import { Link } from 'react-router-dom';
-import FeatureGrid from '../components/FeatureGrid';
 import HeroSection from '../components/HeroSection';
 import RouteTimeline from '../components/RouteTimeline';
 import SectionTitle from '../components/SectionTitle';
 import SpotCard from '../components/SpotCard';
 import { useAppState } from '../context/AppStateContext';
-import { featureCards } from '../data/spots';
-
-const chineseFeatureCards = [
-  {
-    title: '轻量步行体验',
-    detail: '用短故事和清晰提示帮助游客在现场快速理解地点。',
-    accent: 'teal',
-  },
-  {
-    title: '记忆明信片',
-    detail: '把路线、心情和最喜欢的地点转化为可保存的纪念卡片。',
-    accent: 'green',
-  },
-];
 
 export default function HomePage() {
   const { isChinese, spots, selectedRoute } = useAppState();
@@ -48,19 +33,6 @@ export default function HomePage() {
             <SpotCard key={spot.id} spot={spot} />
           ))}
         </div>
-      </section>
-
-      <section className="section-block">
-        <SectionTitle
-          eyebrow={isChinese ? '我们的目标' : 'We Aim at'}
-          title={isChinese ? '为步行、记录与回忆而设计' : 'Built for walking, collecting, and remembering'}
-          description={
-            isChinese
-              ? '让文化遗产内容保持简短、适合移动端，并通过互动形成更自然的参与感。'
-              : 'Heritage content kept short and mobile, with interactions that feel playful and rewarding.'
-          }
-        />
-        <FeatureGrid items={isChinese ? chineseFeatureCards : featureCards} />
       </section>
 
       <section className="split-layout section-block">

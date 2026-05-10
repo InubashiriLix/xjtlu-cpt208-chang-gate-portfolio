@@ -34,8 +34,13 @@ export default function SpotCard({ spot, compact = false }) {
         ))}
       </div>
       <div className="spot-card-footer">
-        <Link className="button button-secondary button-small" to={`/spots/${spot.slug}`}>
-          {isChinese ? '打开地点' : 'Open spot'}
+        <Link
+          className={`button button-primary spot-open-button${compact ? ' is-next-spot' : ''}`}
+          to={`/spots/${spot.slug}`}
+        >
+          {compact
+            ? isChinese ? '前往下一站' : 'Go to next spot'
+            : isChinese ? '打开地点' : 'Open spot'} →
         </Link>
       </div>
     </article>

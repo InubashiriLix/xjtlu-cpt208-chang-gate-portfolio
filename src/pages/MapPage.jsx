@@ -8,6 +8,7 @@ const AMAP_KEY = import.meta.env.VITE_AMAP_KEY;
 const AMAP_SECURITY_KEY = import.meta.env.VITE_AMAP_SECURITY_KEY;
 
 const MAP_CENTER = changGateLocation;
+const MAX_MAP_ZOOM = 20;
 
 const routeStyles = [
   { strokeColor: '#2f8a7d', strokeWeight: 4, strokeOpacity: 0.7, strokeStyle: 'solid' },
@@ -66,7 +67,7 @@ export default function MapPage() {
     info.open(map, marker);
     infoRef.current = info;
 
-    map.setZoom(17);
+    map.setZoom(MAX_MAP_ZOOM);
     map.panTo([spot.location.lng, spot.location.lat]);
   }, [isChinese]);
 
@@ -85,7 +86,8 @@ export default function MapPage() {
 
       const map = new AMap.Map(mapRef.current, {
         center: [MAP_CENTER.lng, MAP_CENTER.lat],
-        zoom: 15,
+        zoom: MAX_MAP_ZOOM,
+        zooms: [3, MAX_MAP_ZOOM],
         mapStyle: 'amap://styles/light',
         resizeEnable: true,
         showIndoorMap: false,
@@ -143,7 +145,7 @@ export default function MapPage() {
         map.add(polyline);
       });
 
-      map.setZoomAndCenter(16, [MAP_CENTER.lng, MAP_CENTER.lat]);
+      map.setZoomAndCenter(MAX_MAP_ZOOM, [MAP_CENTER.lng, MAP_CENTER.lat]);
     } catch (err) {
       console.error('AMap init error:', err);
       setError(isChinese ? '地图加载失败。请检查 API key 和网络。' : 'Failed to load map. Check your API key and network.');
@@ -194,7 +196,6 @@ export default function MapPage() {
       <div
         ref={mapRef}
         className="amap-container"
-        style={{ minHeight: 'calc(100vh - 200px)', width: '100%', borderRadius: '20px', overflow: 'hidden' }}
       />
       <div className="map-legend">
         {walkingRoutes.map((route, i) => (

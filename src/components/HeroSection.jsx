@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { useAppState } from '../context/AppStateContext';
 
 export default function HeroSection() {
@@ -13,6 +14,11 @@ export default function HeroSection() {
             ? '一个面向移动端的阊门运河片区步行助手，帮助游客观察、记录并留下记忆。'
             : 'A bright, mobile-first companion for walking, noticing, collecting, and remembering the Chang Gate canal district.'}
         </p>
+        <div className="hero-actions">
+          <Link className="button button-primary" to="/spots/shantang-street">
+            {isChinese ? '开始探索' : 'Start Explore'}
+          </Link>
+        </div>
       </div>
     </section>
   );

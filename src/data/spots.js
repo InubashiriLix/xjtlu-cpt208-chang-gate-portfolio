@@ -326,16 +326,3 @@ export function getFavoriteSpotPostcardLine(spot, language = 'en') {
 
   return lines[spot.id] ?? fallback;
 }
-
-export const featureCards = [
-  {
-    title: 'Story Hunt',
-    detail: 'Short outdoor-friendly story snippets turn each stop into a playful prompt instead of a dense info page.',
-    accent: 'teal',
-  },
-  {
-    title: 'Souvenir Postcard',
-    detail: 'A postcard that turns mood, route, and favorite place into a keepsake at the end of the walk.',
-    accent: 'green',
-  },
-];
