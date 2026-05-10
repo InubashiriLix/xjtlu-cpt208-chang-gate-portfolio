@@ -1837,3 +1837,22 @@ a:focus-visible {
     bottom: 18px;
   }
 }
+
+/* On narrow screens, stack header buttons vertically so the title isn't squeezed */
+@media (max-width: 520px) {
+  .header-bar-inner {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .header-actions {
+    flex-direction: column;
+    gap: 6px;
+    width: auto;
+    align-self: flex-start;
+  }
+
+  .header-actions .button {
+    text-align: center;
+  }
+}
