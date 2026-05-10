@@ -244,8 +244,7 @@ export default function MapPage() {
                     {nextSpot ? `${isChinese ? '下一站' : 'Next spot'}: ${nextSpot.name}` : isChinese ? '这是路线最后一站' : 'Final spot on this route'}
                   </p>
                   <div className="map-spotlist-footer">
-                    <span className="map-spotlist-hint">{isChinese ? '在地图显示' : 'Show on map'} →</span>
-                    <a className="button button-secondary button-small" href={`/spots/${spot.slug}`}
+                    <a className="button button-primary button-small map-spotlist-open" href={`/spots/${spot.slug}`}
                        onClick={(e) => { e.preventDefault(); navigate(`/spots/${spot.slug}`); }}>
                       {isChinese ? '打开地点' : 'Open spot'}
                     </a>
