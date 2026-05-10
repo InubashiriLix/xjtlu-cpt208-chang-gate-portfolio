@@ -2,6 +2,10 @@ import { useMemo, useRef, useState, useEffect } from 'react';
 import { useAppState } from '../context/AppStateContext';
 import { appDisplayName } from '../data/spots';
 
+const DEEPSEEK_API_URL = 'https://api.deepseek.com/chat/completions';
+const HARDCODED_DEEPSEEK_API_KEY = '';
+const FRONTEND_DEEPSEEK_API_KEY = HARDCODED_DEEPSEEK_API_KEY || import.meta.env.VITE_DEEPSEEK_API_KEY || '';
+
 function buildProgressSummary({ spots, selectedRoute, stats, currentLocation, language }) {
   return {
     app: language === 'zh' ? '阊门遗产' : appDisplayName,
@@ -311,17 +315,28 @@ export default function DeepSeekPage() {
         }
       }
 
-      const response = await fetch('/api/deepseek', {
+      const payload = {
+        model: 'deepseek-chat',
+        messages: apiMessages,
+        temperature: 0.45,
+        max_tokens: 800,
+      };
+      const useFrontendDeepSeek = Boolean(FRONTEND_DEEPSEEK_API_KEY);
+      const response = await fetch(useFrontendDeepSeek ? DEEPSEEK_API_URL : '/api/deepseek', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          messages: apiMessages,
-          temperature: 0.45,
-          max_tokens: 800,
-        }),
+        headers: useFrontendDeepSeek
+          ? {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${FRONTEND_DEEPSEEK_API_KEY}`,
+            }
+          : { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
       });
 
-      const data = await response.json();
+      const contentType = response.headers.get('Content-Type') || '';
+      const data = contentType.includes('application/json')
+        ? await response.json()
+        : { error: await response.text() };
 
       if (!response.ok) {
         throw new Error(data.error || data.message || (isChinese ? '提问请求失败。' : 'Ask request failed.'));
@@ -335,7 +350,13 @@ export default function DeepSeekPage() {
       setMessages([...updatedMessages, { id: Date.now() + 1, role: 'assistant', content }]);
       setStatus('ready');
     } catch (err) {
-      setError(err.message);
+      const corsHint =
+        err instanceof TypeError && FRONTEND_DEEPSEEK_API_KEY
+          ? isChinese
+            ? '请求 DeepSeek 失败。可能是浏览器跨域限制或 API key 无效。'
+            : 'DeepSeek request failed. This may be caused by browser CORS restrictions or an invalid API key.'
+          : err.message;
+      setError(corsHint);
       setStatus('error');
     }
   }
