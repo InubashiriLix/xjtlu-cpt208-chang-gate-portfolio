@@ -1,11 +1,28 @@
-import { useMemo, useRef, useState, useEffect } from 'react';
-import { useAppState } from '../context/AppStateContext';
-import { appDisplayName } from '../data/spots';
+import { useMemo, useRef, useState, useEffect } from "react";
+import { useAppState } from "../context/AppStateContext";
+import { appDisplayName } from "../data/spots";
 
-function buildProgressSummary({ spots, selectedRoute, stats, currentLocation, language }) {
+const DEEPSEEK_API_URL = "https://api.deepseek.com/chat/completions";
+// Paste the DeepSeek key here if this project is deployed on static hosting.
+const HARDCODED_DEEPSEEK_API_KEY = "sk-ec860cc21ddc4803ad45444635fad407";
+const FRONTEND_DEEPSEEK_API_KEY =
+  HARDCODED_DEEPSEEK_API_KEY || import.meta.env.VITE_DEEPSEEK_API_KEY || "";
+
+function canUseLocalDeepSeekProxy() {
+  if (typeof window === "undefined") return true;
+  return ["localhost", "127.0.0.1"].includes(window.location.hostname);
+}
+
+function buildProgressSummary({
+  spots,
+  selectedRoute,
+  stats,
+  currentLocation,
+  language,
+}) {
   return {
-    app: language === 'zh' ? '阊门遗产' : appDisplayName,
-    interfaceLanguage: language === 'zh' ? 'Chinese' : 'English',
+    app: language === "zh" ? "阊门遗产" : appDisplayName,
+    interfaceLanguage: language === "zh" ? "Chinese" : "English",
     currentLocation,
     selectedRoute: {
       name: selectedRoute.name,
@@ -30,9 +47,9 @@ function buildProgressSummary({ spots, selectedRoute, stats, currentLocation, la
 
 function escapeHtml(text) {
   return text
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
 }
 
 function renderInline(text) {
@@ -45,17 +62,17 @@ function renderInline(text) {
     return `<a href="${escapedUrl}" target="_blank" rel="noopener noreferrer">${label}</a>`;
   });
 
-  out = out.replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>');
-  out = out.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-  out = out.replace(/\*(.+?)\*/g, '<em>$1</em>');
+  out = out.replace(/\*\*\*(.+?)\*\*\*/g, "<strong><em>$1</em></strong>");
+  out = out.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+  out = out.replace(/\*(.+?)\*/g, "<em>$1</em>");
 
-  out = out.replace(/`([^`]+)`/g, '<code>$1</code>');
+  out = out.replace(/`([^`]+)`/g, "<code>$1</code>");
 
   return out;
 }
 
 function MarkdownBlock({ content }) {
-  const lines = content.split('\n');
+  const lines = content.split("\n");
   const blocks = [];
   let i = 0;
   let key = 0;
@@ -63,23 +80,23 @@ function MarkdownBlock({ content }) {
   while (i < lines.length) {
     const line = lines[i];
 
-    if (line.startsWith('```')) {
+    if (line.startsWith("```")) {
       const lang = escapeHtml(line.slice(3).trim());
       const codeLines = [];
       i++;
-      while (i < lines.length && !lines[i].startsWith('```')) {
+      while (i < lines.length && !lines[i].startsWith("```")) {
         codeLines.push(lines[i]);
         i++;
       }
       i++;
-      const codeContent = escapeHtml(codeLines.join('\n'));
+      const codeContent = escapeHtml(codeLines.join("\n"));
       blocks.push(
         <pre key={key++}>
           <code className={lang ? `language-${lang}` : undefined}>
             {null}
             <span dangerouslySetInnerHTML={{ __html: codeContent }} />
           </code>
-        </pre>
+        </pre>,
       );
       continue;
     }
@@ -87,15 +104,43 @@ function MarkdownBlock({ content }) {
     if (/^#{1,4}\s/.test(line)) {
       const m = line.match(/^(#{1,4})\s(.+)/);
       const level = m[1].length;
-      if (level === 1) blocks.push(<h1 key={key++} dangerouslySetInnerHTML={{ __html: renderInline(m[2]) }} />);
-      else if (level === 2) blocks.push(<h2 key={key++} dangerouslySetInnerHTML={{ __html: renderInline(m[2]) }} />);
-      else if (level === 3) blocks.push(<h3 key={key++} dangerouslySetInnerHTML={{ __html: renderInline(m[2]) }} />);
-      else blocks.push(<h4 key={key++} dangerouslySetInnerHTML={{ __html: renderInline(m[2]) }} />);
+      if (level === 1)
+        blocks.push(
+          <h1
+            key={key++}
+            dangerouslySetInnerHTML={{ __html: renderInline(m[2]) }}
+          />,
+        );
+      else if (level === 2)
+        blocks.push(
+          <h2
+            key={key++}
+            dangerouslySetInnerHTML={{ __html: renderInline(m[2]) }}
+          />,
+        );
+      else if (level === 3)
+        blocks.push(
+          <h3
+            key={key++}
+            dangerouslySetInnerHTML={{ __html: renderInline(m[2]) }}
+          />,
+        );
+      else
+        blocks.push(
+          <h4
+            key={key++}
+            dangerouslySetInnerHTML={{ __html: renderInline(m[2]) }}
+          />,
+        );
       i++;
       continue;
     }
 
-    if (/^\|.+\|/.test(line) && i + 1 < lines.length && /^\|[-:| ]+\|$/.test(lines[i + 1].replace(/`/g, ''))) {
+    if (
+      /^\|.+\|/.test(line) &&
+      i + 1 < lines.length &&
+      /^\|[-:| ]+\|$/.test(lines[i + 1].replace(/`/g, ""))
+    ) {
       const headerLine = line;
       const separatorLine = lines[i + 1];
       const dataRows = [];
@@ -107,21 +152,21 @@ function MarkdownBlock({ content }) {
 
       const parseRow = (row) =>
         row
-          .replace(/^\||\|$/g, '')
-          .split('|')
+          .replace(/^\||\|$/g, "")
+          .split("|")
           .map((cell) => renderInline(cell.trim()));
 
       const headerCells = parseRow(headerLine);
       const bodyRows = dataRows.map(parseRow);
 
       const alignments = separatorLine
-        .replace(/^\||\|$/g, '')
-        .split('|')
+        .replace(/^\||\|$/g, "")
+        .split("|")
         .map((s) => {
           const t = s.trim();
-          if (t.startsWith(':') && t.endsWith(':')) return 'center';
-          if (t.endsWith(':')) return 'right';
-          return 'left';
+          if (t.startsWith(":") && t.endsWith(":")) return "center";
+          if (t.endsWith(":")) return "right";
+          return "left";
         });
 
       blocks.push(
@@ -132,7 +177,7 @@ function MarkdownBlock({ content }) {
                 {headerCells.map((h, ci) => (
                   <th
                     key={ci}
-                    style={{ textAlign: alignments[ci] || 'left' }}
+                    style={{ textAlign: alignments[ci] || "left" }}
                     dangerouslySetInnerHTML={{ __html: h }}
                   />
                 ))}
@@ -144,7 +189,7 @@ function MarkdownBlock({ content }) {
                   {row.map((cell, ci) => (
                     <td
                       key={ci}
-                      style={{ textAlign: alignments[ci] || 'left' }}
+                      style={{ textAlign: alignments[ci] || "left" }}
                       dangerouslySetInnerHTML={{ __html: cell }}
                     />
                   ))}
@@ -152,7 +197,7 @@ function MarkdownBlock({ content }) {
               ))}
             </tbody>
           </table>
-        </div>
+        </div>,
       );
       continue;
     }
@@ -160,8 +205,13 @@ function MarkdownBlock({ content }) {
     if (/^[-*]\s/.test(line)) {
       const items = [];
       while (i < lines.length && /^[-*]\s/.test(lines[i])) {
-        const itemText = lines[i].replace(/^[-*]\s/, '');
-        items.push(<li key={items.length} dangerouslySetInnerHTML={{ __html: renderInline(itemText) }} />);
+        const itemText = lines[i].replace(/^[-*]\s/, "");
+        items.push(
+          <li
+            key={items.length}
+            dangerouslySetInnerHTML={{ __html: renderInline(itemText) }}
+          />,
+        );
         i++;
       }
       blocks.push(<ul key={key++}>{items}</ul>);
@@ -171,8 +221,13 @@ function MarkdownBlock({ content }) {
     if (/^\d+\.\s/.test(line)) {
       const items = [];
       while (i < lines.length && /^\d+\.\s/.test(lines[i])) {
-        const itemText = lines[i].replace(/^\d+\.\s/, '');
-        items.push(<li key={items.length} dangerouslySetInnerHTML={{ __html: renderInline(itemText) }} />);
+        const itemText = lines[i].replace(/^\d+\.\s/, "");
+        items.push(
+          <li
+            key={items.length}
+            dangerouslySetInnerHTML={{ __html: renderInline(itemText) }}
+          />,
+        );
         i++;
       }
       blocks.push(<ol key={key++}>{items}</ol>);
@@ -182,11 +237,16 @@ function MarkdownBlock({ content }) {
     if (/^>\s/.test(line)) {
       const quoteLines = [];
       while (i < lines.length && /^>\s?/.test(lines[i])) {
-        quoteLines.push(lines[i].replace(/^>\s?/, ''));
+        quoteLines.push(lines[i].replace(/^>\s?/, ""));
         i++;
       }
       blocks.push(
-        <blockquote key={key++} dangerouslySetInnerHTML={{ __html: renderInline(quoteLines.join('<br/>')) }} />
+        <blockquote
+          key={key++}
+          dangerouslySetInnerHTML={{
+            __html: renderInline(quoteLines.join("<br/>")),
+          }}
+        />,
       );
       continue;
     }
@@ -197,7 +257,7 @@ function MarkdownBlock({ content }) {
       continue;
     }
 
-    if (line.trim() === '') {
+    if (line.trim() === "") {
       i++;
       continue;
     }
@@ -205,7 +265,7 @@ function MarkdownBlock({ content }) {
     const paraLines = [];
     while (
       i < lines.length &&
-      lines[i].trim() !== '' &&
+      lines[i].trim() !== "" &&
       !/^(```|#{1,4}\s|[-*]\s|\d+\.\s|>\s|\|)/.test(lines[i]) &&
       !/^(-{3,}|\*{3,}|_{3,})\s*$/.test(lines[i])
     ) {
@@ -213,7 +273,12 @@ function MarkdownBlock({ content }) {
       i++;
     }
     blocks.push(
-      <p key={key++} dangerouslySetInnerHTML={{ __html: renderInline(paraLines.join('<br/>')) }} />
+      <p
+        key={key++}
+        dangerouslySetInnerHTML={{
+          __html: renderInline(paraLines.join("<br/>")),
+        }}
+      />,
     );
   }
 
@@ -229,15 +294,32 @@ function Avatar() {
           <stop offset="100%" stopColor="var(--amber)" />
         </linearGradient>
       </defs>
-      <circle cx="16" cy="16" r="15" fill="url(#ds-av)" stroke="rgba(47,138,125,0.3)" strokeWidth="1.5" />
-      <text x="16" y="21" textAnchor="middle" fill="white" fontSize="14" fontWeight="800" fontFamily="Fraunces, serif">A</text>
+      <circle
+        cx="16"
+        cy="16"
+        r="15"
+        fill="url(#ds-av)"
+        stroke="rgba(47,138,125,0.3)"
+        strokeWidth="1.5"
+      />
+      <text
+        x="16"
+        y="21"
+        textAnchor="middle"
+        fill="white"
+        fontSize="14"
+        fontWeight="800"
+        fontFamily="Fraunces, serif"
+      >
+        A
+      </text>
     </svg>
   );
 }
 
 function formatAnswer(content) {
   const trimmed = content.trim();
-  return trimmed || 'No response received.';
+  return trimmed || "No response received.";
 }
 
 export default function DeepSeekPage() {
@@ -251,97 +333,140 @@ export default function DeepSeekPage() {
     chatMessages: messages,
     setChatMessages: setMessages,
   } = useAppState();
-  const [input, setInput] = useState('');
-  const [status, setStatus] = useState('idle');
-  const [error, setError] = useState('');
+  const [input, setInput] = useState("");
+  const [status, setStatus] = useState("idle");
+  const [error, setError] = useState("");
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
   const progressSummary = useMemo(
-    () => buildProgressSummary({ spots, selectedRoute, stats, currentLocation, language }),
+    () =>
+      buildProgressSummary({
+        spots,
+        selectedRoute,
+        stats,
+        currentLocation,
+        language,
+      }),
     [currentLocation, language, selectedRoute, spots, stats],
   );
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, status, error]);
 
   async function sendMessage() {
     const trimmed = input.trim();
-    if (!trimmed || status === 'loading') return;
+    if (!trimmed || status === "loading") return;
 
-    setInput('');
-    setError('');
+    setInput("");
+    setError("");
 
-    const userMsg = { id: Date.now(), role: 'user', content: trimmed };
+    const userMsg = { id: Date.now(), role: "user", content: trimmed };
     const updatedMessages = [...messages, userMsg];
     setMessages(updatedMessages);
-    setStatus('loading');
+    setStatus("loading");
 
     try {
       const systemMsg = {
-        role: 'system',
-        content:
-          [
-            `You are a concise onsite heritage walk assistant for ${appDisplayName}.`,
-            'Use the supplied live progress JSON as truth. Recommend the next practical stop, explain why it fits the route, and keep advice outdoor-friendly.',
-            'Do not invent locations outside the provided data.',
-            `The visitor selected interface language is ${language === 'zh' ? 'Chinese' : 'English'}. You must answer in ${language === 'zh' ? 'Chinese' : 'English'} unless the visitor explicitly asks for another language.`,
-            'Use Markdown for formatting in your responses when helpful.',
-          ].join(' '),
+        role: "system",
+        content: [
+          `You are a concise onsite heritage walk assistant for ${appDisplayName}.`,
+          "Use the supplied live progress JSON as truth. Recommend the next practical stop, explain why it fits the route, and keep advice outdoor-friendly.",
+          "Do not invent locations outside the provided data.",
+          `The visitor selected interface language is ${language === "zh" ? "Chinese" : "English"}. You must answer in ${language === "zh" ? "Chinese" : "English"} unless the visitor explicitly asks for another language.`,
+          "Use Markdown for formatting in your responses when helpful.",
+        ].join(" "),
       };
 
       const apiMessages = [systemMsg];
 
       for (let idx = 0; idx < updatedMessages.length; idx++) {
         const msg = updatedMessages[idx];
-        if (idx === 0 && msg.role === 'user') {
+        if (idx === 0 && msg.role === "user") {
           apiMessages.push({
-            role: 'user',
+            role: "user",
             content: [
-              isChinese ? '游客进度 JSON:' : 'Visitor progress JSON:',
+              isChinese ? "游客进度 JSON:" : "Visitor progress JSON:",
               JSON.stringify(progressSummary, null, 2),
-              '',
-              isChinese ? '游客问题:' : 'Visitor request:',
+              "",
+              isChinese ? "游客问题:" : "Visitor request:",
               msg.content,
-            ].join('\n'),
+            ].join("\n"),
           });
         } else {
           apiMessages.push({ role: msg.role, content: msg.content });
         }
       }
 
-      const response = await fetch('/api/deepseek', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          messages: apiMessages,
-          temperature: 0.45,
-          max_tokens: 800,
-        }),
-      });
+      const payload = {
+        model: "deepseek-chat",
+        messages: apiMessages,
+        temperature: 0.45,
+        max_tokens: 800,
+      };
+      const useFrontendDeepSeek = Boolean(FRONTEND_DEEPSEEK_API_KEY);
+      if (!useFrontendDeepSeek && !canUseLocalDeepSeekProxy()) {
+        throw new Error(
+          isChinese
+            ? "线上 Ask 功能缺少前端 DeepSeek API key。请在 DeepSeekPage.jsx 中填写 HARDCODED_DEEPSEEK_API_KEY 后重新构建部署。"
+            : "The hosted Ask feature is missing a frontend DeepSeek API key. Fill HARDCODED_DEEPSEEK_API_KEY in DeepSeekPage.jsx, then rebuild and redeploy.",
+        );
+      }
 
-      const data = await response.json();
+      const response = await fetch(
+        useFrontendDeepSeek ? DEEPSEEK_API_URL : "/api/deepseek",
+        {
+          method: "POST",
+          headers: useFrontendDeepSeek
+            ? {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${FRONTEND_DEEPSEEK_API_KEY}`,
+              }
+            : { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        },
+      );
+
+      const contentType = response.headers.get("Content-Type") || "";
+      const data = contentType.includes("application/json")
+        ? await response.json()
+        : { error: await response.text() };
 
       if (!response.ok) {
-        throw new Error(data.error || data.message || (isChinese ? '提问请求失败。' : 'Ask request failed.'));
+        throw new Error(
+          data.error ||
+            data.message ||
+            (isChinese ? "提问请求失败。" : "Ask request failed."),
+        );
       }
 
       const content = data.choices?.[0]?.message?.content;
       if (!content) {
-        throw new Error(isChinese ? '未收到回答。' : 'Ask returned an empty answer.');
+        throw new Error(
+          isChinese ? "未收到回答。" : "Ask returned an empty answer.",
+        );
       }
 
-      setMessages([...updatedMessages, { id: Date.now() + 1, role: 'assistant', content }]);
-      setStatus('ready');
+      setMessages([
+        ...updatedMessages,
+        { id: Date.now() + 1, role: "assistant", content },
+      ]);
+      setStatus("ready");
     } catch (err) {
-      setError(err.message);
-      setStatus('error');
+      const corsHint =
+        err instanceof TypeError && FRONTEND_DEEPSEEK_API_KEY
+          ? isChinese
+            ? "请求 DeepSeek 失败。可能是浏览器跨域限制或 API key 无效。"
+            : "DeepSeek request failed. This may be caused by browser CORS restrictions or an invalid API key."
+          : err.message;
+      setError(corsHint);
+      setStatus("error");
     }
   }
 
   function handleKeyDown(e) {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       sendMessage();
     }
@@ -353,12 +478,18 @@ export default function DeepSeekPage() {
         <div className="chat-header-top">
           <Avatar />
           <div>
-            <h2 className="chat-model-name">{isChinese ? '提问' : 'Ask'}</h2>
-            <p className="chat-model-desc">{isChinese ? '面向阊门路线的步行问答助手' : 'Route-aware chat for the Chang Gate walk'}</p>
+            <h2 className="chat-model-name">{isChinese ? "提问" : "Ask"}</h2>
+            <p className="chat-model-desc">
+              {isChinese
+                ? "面向阊门路线的步行问答助手"
+                : "Route-aware chat for the Chang Gate walk"}
+            </p>
           </div>
         </div>
         <div className="chat-progress-inline">
-          <span className="chat-stat"><strong>{stats.totalSpots}</strong> {isChinese ? '个地点' : 'spots'}</span>
+          <span className="chat-stat">
+            <strong>{stats.totalSpots}</strong> {isChinese ? "个地点" : "spots"}
+          </span>
           <span className="chat-stat">{selectedRoute.name}</span>
         </div>
       </header>
@@ -368,31 +499,45 @@ export default function DeepSeekPage() {
           <div className="chat-empty">
             <div className="chat-empty-icon">
               <svg width="48" height="48" viewBox="0 0 56 56" fill="none">
-                <circle cx="28" cy="28" r="26" fill="rgba(47,138,125,0.08)" stroke="rgba(47,138,125,0.2)" strokeWidth="2" />
-                <path d="M28 18v16M22 22l6-4 6 4" stroke="rgba(47,138,125,0.6)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                <circle
+                  cx="28"
+                  cy="28"
+                  r="26"
+                  fill="rgba(47,138,125,0.08)"
+                  stroke="rgba(47,138,125,0.2)"
+                  strokeWidth="2"
+                />
+                <path
+                  d="M28 18v16M22 22l6-4 6 4"
+                  stroke="rgba(47,138,125,0.6)"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
                 <circle cx="20" cy="36" r="3" fill="rgba(201,135,45,0.3)" />
                 <circle cx="28" cy="38" r="3" fill="rgba(201,135,45,0.3)" />
                 <circle cx="36" cy="36" r="3" fill="rgba(201,135,45,0.3)" />
               </svg>
             </div>
-            <h3>{isChinese ? '向路线助手提问' : 'Ask your route assistant'}</h3>
+            <h3>{isChinese ? "向路线助手提问" : "Ask your route assistant"}</h3>
             <p>
               {isChinese
-                ? '可以询问下一站、某个地点该观察什么，或根据当前进度获取实用步行建议。'
-                : 'Ask about the best next stop, what to notice at a location, or get practical walking tips based on your current progress.'}
+                ? "可以询问下一站、某个地点该观察什么，或根据当前进度获取实用步行建议。"
+                : "Ask about the best next stop, what to notice at a location, or get practical walking tips based on your current progress."}
             </p>
             <div className="chat-suggestions">
               {(isChinese
                 ? [
-                    '根据我的进度，下一站应该去哪里？',
-                    '介绍一下我路线上的下一站。',
-                    '阊门片区为什么适合做遗产步行？',
+                    "根据我的进度，下一站应该去哪里？",
+                    "介绍一下我路线上的下一站。",
+                    "阊门片区为什么适合做遗产步行？",
                   ]
                 : [
-                    'Based on my progress, what should I visit next?',
-                    'Tell me about the next stop on my route.',
-                    'What makes the Chang Gate area special for heritage walking?',
-                  ]).map((suggestion) => (
+                    "Based on my progress, what should I visit next?",
+                    "Tell me about the next stop on my route.",
+                    "What makes the Chang Gate area special for heritage walking?",
+                  ]
+              ).map((suggestion) => (
                 <button
                   key={suggestion}
                   type="button"
@@ -410,14 +555,14 @@ export default function DeepSeekPage() {
         ) : (
           messages.map((msg) => (
             <div key={msg.id} className={`chat-msg-row ${msg.role}`}>
-              {msg.role === 'assistant' && (
+              {msg.role === "assistant" && (
                 <div className="chat-msg-avatar">
                   <Avatar />
                 </div>
               )}
               <div className="chat-msg-body">
                 <div className={`chat-bubble ${msg.role}`}>
-                  {msg.role === 'assistant' ? (
+                  {msg.role === "assistant" ? (
                     <div className="md-content">
                       <MarkdownBlock content={formatAnswer(msg.content)} />
                     </div>
@@ -430,14 +575,18 @@ export default function DeepSeekPage() {
           ))
         )}
 
-        {status === 'loading' && (
+        {status === "loading" && (
           <div className="chat-msg-row assistant">
             <div className="chat-msg-avatar">
               <Avatar />
             </div>
             <div className="chat-msg-body">
               <div className="chat-bubble assistant chat-loading-bubble">
-                <span className="typing-dots"><span /><span /><span /></span>
+                <span className="typing-dots">
+                  <span />
+                  <span />
+                  <span />
+                </span>
               </div>
             </div>
           </div>
@@ -447,7 +596,7 @@ export default function DeepSeekPage() {
           <div className="chat-msg-row assistant">
             <div className="chat-msg-body">
               <div className="chat-error">
-                <strong>{isChinese ? '错误' : 'Error'}:</strong> {error}
+                <strong>{isChinese ? "错误" : "Error"}:</strong> {error}
               </div>
             </div>
           </div>
@@ -464,25 +613,40 @@ export default function DeepSeekPage() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder={isChinese ? '询问下一站、路线建议或观察重点...' : 'Ask about your next stop, route tips, or what to notice...'}
+            placeholder={
+              isChinese
+                ? "询问下一站、路线建议或观察重点..."
+                : "Ask about your next stop, route tips, or what to notice..."
+            }
             rows={1}
-            disabled={status === 'loading'}
+            disabled={status === "loading"}
           />
           <button
             type="button"
             className="chat-send-btn"
             onClick={sendMessage}
-            disabled={status === 'loading' || !input.trim()}
-            aria-label={isChinese ? '发送消息' : 'Send message'}
+            disabled={status === "loading" || !input.trim()}
+            aria-label={isChinese ? "发送消息" : "Send message"}
           >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <line x1="12" y1="19" x2="12" y2="5" />
               <polyline points="5 12 12 5 19 12" />
             </svg>
           </button>
         </div>
         <p className="chat-composer-hint">
-          {isChinese ? '按' : 'Press'} <kbd>Enter</kbd> {isChinese ? '发送，' : 'to send, '}<kbd>Shift + Enter</kbd> {isChinese ? '换行。' : 'for new line.'}
+          {isChinese ? "按" : "Press"} <kbd>Enter</kbd>{" "}
+          {isChinese ? "发送，" : "to send, "}
+          <kbd>Shift + Enter</kbd> {isChinese ? "换行。" : "for new line."}
         </p>
       </div>
     </div>
